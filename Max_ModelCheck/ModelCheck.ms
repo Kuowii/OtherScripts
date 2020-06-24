@@ -1,15 +1,11 @@
+include "ModelCheck_ShowResult.ms"
+
 struct CheckResultData(
 	obj,
 	data=#(),
 	result_type=#()
 	)
 	
-fn FnTest=(
-	print "Test";
-	local uvw = selection[1].STL_Check;
-	print selection[1].selectedFaces.count;
-)
-
 global rn=#();
 global ro=#();
 global curOpObj;
@@ -78,13 +74,19 @@ fn UVRangeCheck i=(
 fn OpenEdgeCheck i=(
 		try(
 			local stl = STL_Check();
+			local l=#();
 			addmodifier i.obj stl
 			stl.Check_Now=1
 			local faces=i.obj.selectedFaces
 			if faces.count>0 do(
+				for f in faces do(
+					--print f
+					append l f
+				)
 				append i.result_type 6
-				append i.data faces
+				append i.data l
 			)
+			deletemodifier i.obj stl
 			
 	)catch(
 		print(i.obj.name+" is not a mesh.")
@@ -139,7 +141,7 @@ rollout CheckResultPanel "Result" width:800 height:500
 	
 	on ops selected i do(
 		case ops.items[i] of(
-			"Open edge":()
+			"Open edge":(ShowOpenEdge(ro[robjs.selection]))
 		)
 	)
 	
@@ -161,12 +163,14 @@ rollout CheckSetting "Setting"
 	group "Check Operation"(
 	button btnCheckStart "Check" across:2
 	button btnTest "Test"
+	button btnTest2 "Test2"
 	)
 	on btnCheckStart pressed do(
 		CheckStart(666)
 	)
 	
-	on btnTest pressed do (FnTest())
+	on btnTest pressed do (local ll=FnTest();FnTest2(ll))
+	--on btnTest2 pressed do (FnTest2())
 )
 
 rollout BaseCheck "BaseCheck"
