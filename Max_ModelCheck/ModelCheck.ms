@@ -1,4 +1,5 @@
 include "ModelCheck_ShowResult.ms"
+include "ModelCheck_Check.ms"
 
 struct CheckResultData(
 	obj,
@@ -9,90 +10,6 @@ struct CheckResultData(
 global rn=#();
 global ro=#();
 global curOpObj;
-	
-fn BaseCheckOnSelect i=(
-		local obj = i.obj;
-		if(obj.pos!=[0.0,0.0,0.0]) then
-		(
-			append i.result_type 1
-		)
-		if(isIdentity(obj.rotation) == false) then
-		(
-			append i.result_type 2
-		)
-		if(obj.scale!=[1.0,1.0,1.0]) then
-		(
-			append i.result_type 3
-		)
-)
-
-fn UVOverlapCheck i=(
-	local isAddNew;
-	local uvw=i.obj.modifiers[Unwrap_UVW];
-	if uvw!=undefined then(
-		isAddNew=false;
-	)else(
-		isAddNew=true;
-		uvw=Unwrap_UVW()
-		addmodifier i.obj uvw
-	)
-	uvw.selectOverlappedFaces();
-	local faces=uvw.getSelectedFaces();
-	if faces!=undefined do (
-		faces = faces as array;
-		print (i.obj.name+ " overlap uv is "+(faces.count as string))
-		if faces.count>0 do (
-			append i.result_type 4
-			append i.data (faces as bitarray)
-		)
-	)
-	if isAddNew do deletemodifier i.obj uvw
-)
-
-fn point3IsOutRange p=(
-	return p.x>=0 and p.x<=1 and p.y>=0 and p.y<=1
-)
-
-fn UVRangeCheck i=(
-	try(
-			local l=#()
-			for v=1 to i.obj.numtverts do(
-			local p = getTVert i.obj v
-			if point3IsOutRange(p) do(
-				append l v
-			)
-		)
-			if l.count>0 do(
-				append i.result_type 5
-				append i.data l
-			)
-	)catch(
-		print(i.obj.name+" is not a mesh.")
-	)
-)
-
-fn OpenEdgeCheck i=(
-		try(
-			local stl = STL_Check();
-			local l=#();
-			addmodifier i.obj stl
-			stl.Check_Now=1
-			local faces=i.obj.selectedFaces
-			if faces.count>0 do(
-				for f in faces do(
-					--print f
-					append l f
-				)
-				append i.result_type 6
-				append i.data l
-			)
-			deletemodifier i.obj stl
-			
-	)catch(
-		print(i.obj.name+" is not a mesh.")
-	)
-	
-)
 
 fn CheckStart t=(
 	--messagebox ("Check start " + (t as string))
@@ -117,7 +34,35 @@ fn CheckStart t=(
 				append ro curOpObj
 			)
 		)
-	createdialog CheckResultPanel
+
+		if CheckSetting.cbSceneData.checked do (
+			curOpObj=CheckResultData()
+			curOpObj.data[1]=SceneDataCheckSetting.SceneDataUnit.selected
+			SceneDataCheck(curOpObj)
+			if(curOpObj.result_type.count>0) then
+			(
+				append rn "Unit"
+				append ro curOpObj
+			)
+		)
+		
+		if CheckSetting.cbFaceCount.checked do (
+			curOpObj=CheckResultData()
+			curOpObj.data[1]=FaceCountCheckSetting.spFaceCount.value
+			FacesCountCheck(curOpObj)
+			if(curOpObj.result_type.count>0) then
+			(
+				append rn "Faces Count"
+				append ro curOpObj
+			)
+		)
+		
+		if ro.count>0 then(
+			createdialog CheckResultPanel
+		)else(
+			Messagebox "ALL check pass!"
+		)
+	
 	)
 
 rollout CheckResultPanel "Result" width:800 height:500
@@ -128,12 +73,14 @@ rollout CheckResultPanel "Result" width:800 height:500
 		local l=#()
 		for t in ro[i].result_type do(
 			case t of (
-				1:(append l "Not at origin.")
-				2:(append l "Not zero rotate.")
-				3:(append l "Not one scale.")
-				4:(append l "UV overlap.")
-				5:(append l "UV over range.")
+				1:(append l "Not at origin")
+				2:(append l "Not zero rotate")
+				3:(append l "Not one scale")
+				4:(append l "UV overlap")
+				5:(append l "UV over range")
 				6:(append l "Open edge")
+				101:(append l "Unit is not corresponding")
+				102:(append l "Faces count over")
 			)
 		)
 		ops.items=l;
@@ -142,6 +89,8 @@ rollout CheckResultPanel "Result" width:800 height:500
 	on ops selected i do(
 		case ops.items[i] of(
 			"Open edge":(ShowOpenEdge(ro[robjs.selection]))
+			"UV overlap":(ShowOverlapFaces(ro[robjs.selection]))
+			"UV over range":(ShowUVOverRange(ro[robjs.selection]))
 		)
 	)
 	
@@ -169,16 +118,12 @@ rollout CheckSetting "Setting"
 		CheckStart(666)
 	)
 	
-	on btnTest pressed do (local ll=FnTest();FnTest2(ll))
+	on btnTest pressed do (FnTest())
 	--on btnTest2 pressed do (FnTest2())
 )
 
 rollout BaseCheck "BaseCheck"
 (
---slider happy "Happy" orient:#vertical across:5
---slider sad "Sad" orient:#vertical
---slider oo "OO" orient:#vertical
---slider ee "EE" orient:#vertical
 	group "Setting"(
 		)
 	group "Result"(
@@ -187,9 +132,31 @@ rollout BaseCheck "BaseCheck"
 
 )
 
+rollout SceneDataCheckSetting "SceneData"
+(
+	local UnitSets=#(
+		#Inches,
+		#Feet,
+		#Miles,
+		#Millimeters,
+		#Centimeters,
+		#Meters,
+		#Kilometers 
+	)
+	dropdownlist SceneDataUnit "Unit" items:UnitSets selection:5
+)
+
+rollout FaceCountCheckSetting "FaceCount"
+(
+	spinner spFaceCount "Count" type:#integer scale:10 range:[1,1000000,2000]
+	--spFaceCount.value = 2000;
+)
+
 MainRolloutFolater = newRolloutFloater "ModelCheck" 800 500
 addRollout CheckSetting MainRolloutFolater rolledUp:false
 addRollout BaseCheck MainRolloutFolater rolledUp:true
+addRollout SceneDataCheckSetting MainRolloutFolater rolledUp:true
+addRollout FaceCountCheckSetting MainRolloutFolater rolledUp:true
 --addRollout test MainRolloutFolater
 
 

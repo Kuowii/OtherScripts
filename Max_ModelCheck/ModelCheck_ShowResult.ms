@@ -5,29 +5,35 @@ fn ShowOpenEdge i=(
 	try(
 		i.obj.selectedFaces=(i.data[1] as bitarray)
 	)catch(
-		print(i.obj.name+" is not a mesh.")
+		print(i.obj.name+" is not a mesh(ShowOpenEdge).")
 	)
 )
 
-
-fn FnTest=(
-	local obj=selection[1]
-			local stl = STL_Check();
-			local l=#();
-			addmodifier obj stl
-			stl.Check_Now=1
-			local faces=obj.selectedFaces as bitarray
-			if faces.count>0 do(
-				for f in faces do(
-					append l f
-				)
-			)
-			deletemodifier obj stl
-	return l;
+fn ShowOverlapFaces i=(
+	clearselection();
+	select i.obj
+	subobjectLevel=3
+	try(
+		i.obj.selectedFaces=(i.data[1] as bitarray)
+	)catch(
+		print (i.obj.name + " is not a mesh(ShowOverlapFaces).")
+	)
 )
 
-fn FnTest2 ll=(
-	print "Test2";
-	local obj=selection[1]
-	obj.selectedFaces=(ll as bitarray)
+fn ShowUVOverRange i=(
+	clearselection();
+	select i.obj
+	subobjectLevel=0
+	local isAddNew;
+	local uvw=i.obj.modifiers[Unwrap_UVW];
+	if uvw!=undefined then(
+		isAddNew=false;
+	)else(
+		isAddNew=true;
+		uvw=Unwrap_UVW()
+		uvw.name="ShowUVOverRange"
+		addmodifier i.obj uvw
+	)
+	subobjectLevel=1;
+	uvw.selectVertices (i.data[1] as bitarray) 
 )
