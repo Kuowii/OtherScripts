@@ -39,7 +39,11 @@ fn UVOverlapCheck i=(
 		addmodifier i.obj uvw
 	)
 	uvw.selectOverlappedFaces();
-	local faces=uvw.getSelectedFaces();
+	local faces = for i in uvw.getSelectedFaces collect i.index
+				for f in faces do(
+				print f
+			)
+	--local faces=uvw.getSelectedFaces();
 	local l=#();
 	if faces!=undefined do (
 		local arrfaces = faces as array;
@@ -85,14 +89,14 @@ fn OpenEdgeCheck i=(
 			local l=#();
 			addmodifier i.obj stl
 			stl.Check_Now=1
-			local faces=i.obj.selectedFaces
+			local faces = for i in i.obj.selectedFaces collect i.index
 			if faces.count>0 do(
 				for f in faces do(
-					--print f
+					print f
 					append l f
 				)
 				append i.result_type 6
-				append i.data l
+				append i.data faces
 			)
 			deletemodifier i.obj stl
 			
