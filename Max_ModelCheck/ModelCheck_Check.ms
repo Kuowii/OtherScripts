@@ -38,31 +38,22 @@ fn UVOverlapCheck i=(
 		uvw=Unwrap_UVW()
 		addmodifier i.obj uvw
 	)
+	subobjectLevel=3;
 	uvw.selectOverlappedFaces();
-	local faces = for i in uvw.getSelectedFaces collect i.index
-				for f in faces do(
-				print f
-			)
-	--local faces=uvw.getSelectedFaces();
-	local l=#();
-	if faces!=undefined do (
-		local arrfaces = faces as array;
-		print (i.obj.name+ " overlap uv is "+(arrfaces.count as string))
-		if arrfaces.count>0 do (
-			
-			for f in faces do(
-				append l f
-			)
-			
-			append i.result_type 4
-			append i.data l
-		)
+	local uvwface=uvw.getSelectedFaces();
+	print uvwface;
+	local faces = for f in uvwface collect f
+	if faces.count>0 do (
+		print (i.obj.name+ " overlap uv is "+(faces.count as string))			
+		append i.result_type 4
+		i.data[4]=faces
 	)
+	--subobjectLevel=0
 	if isAddNew do deletemodifier i.obj uvw
 )
 
 fn point3IsOutRange p=(
-	return p.x>=0 and p.x<=1 and p.y>=0 and p.y<=1
+	return p.x>=0.0 and p.x<=1.0 and p.y>=0.0 and p.y<=1.0
 )
 
 fn UVRangeCheck i=(
@@ -76,7 +67,7 @@ fn UVRangeCheck i=(
 		)
 			if l.count>0 do(
 				append i.result_type 5
-				append i.data l
+				i.data[5]=l
 			)
 	)catch(
 		print(i.obj.name+" is not a mesh.")
@@ -96,7 +87,7 @@ fn OpenEdgeCheck i=(
 					append l f
 				)
 				append i.result_type 6
-				append i.data faces
+				i.data[6]=faces
 			)
 			deletemodifier i.obj stl
 			
@@ -130,4 +121,27 @@ fn FacesCountCheck data=(
 		print str
 	)
 	clearselection();
+)
+
+fn SmoothGroupCheck i=(
+	local count;
+	local l=#();
+	try(
+		count = i.obj.numfaces;
+	)catch(
+		print(i.obj.name+" is not a mesh.")
+		return 0;
+	)
+	
+	for index=1 to count do(
+		local sgv=getFaceSmoothGroup i.obj index
+		if( sgv ==0) then(
+			append l index
+		)
+	)
+	
+	if(l.count>0) then(
+		append i.result_type 7
+		i.data[7]=l
+	)
 )

@@ -28,6 +28,7 @@ fn CheckStart t=(
 			if CheckSetting.cbUVLap.checked do UVOverlapCheck(curOpObj)
 			if CheckSetting.cbUVRange.checked do UVRangeCheck(curOpObj)
 			if CheckSetting.cbOpenEdge.checked do OpenEdgeCheck(curOpObj)
+			if CheckSetting.cbSmooth.checked do SmoothGroupCheck(curOpObj)
 			if(curOpObj.result_type.count>0) then
 			(
 				append rn i.name
@@ -70,6 +71,8 @@ rollout CheckResultPanel "Result" width:800 height:500
 	listbox robjs "Objects" width:200 height:30 across:2 items:rn
 	listbox ops "Operations" width:500 height:30 offset:[-150,0]
 	on robjs selected i do(
+		subObjectLevel=0;
+		if ro[i].obj!=undefined do select ro[i].obj
 		local l=#()
 		for t in ro[i].result_type do(
 			case t of (
@@ -79,6 +82,7 @@ rollout CheckResultPanel "Result" width:800 height:500
 				4:(append l "UV overlap")
 				5:(append l "UV over range")
 				6:(append l "Open edge")
+				7:(append l "Not full smooth group")
 				101:(append l "Unit is not corresponding")
 				102:(append l "Faces count over")
 			)
@@ -91,6 +95,7 @@ rollout CheckResultPanel "Result" width:800 height:500
 			"Open edge":(ShowOpenEdge(ro[robjs.selection]))
 			"UV overlap":(ShowOverlapFaces(ro[robjs.selection]))
 			"UV over range":(ShowUVOverRange(ro[robjs.selection]))
+			"Not full smooth group":(ShowNoSmoothGroupFace(ro[robjs.selection]))
 		)
 	)
 	

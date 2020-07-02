@@ -3,7 +3,7 @@ fn ShowOpenEdge i=(
 	select i.obj
 	subobjectLevel=3
 	try(
-		i.obj.selectedFaces=(i.data[1] as bitarray)
+		i.obj.selectedFaces=(i.data[6] as bitarray)
 	)catch(
 		print(i.obj.name+" is not a mesh(ShowOpenEdge).")
 	)
@@ -14,7 +14,7 @@ fn ShowOverlapFaces i=(
 	select i.obj
 	subobjectLevel=3
 	try(
-		i.obj.selectedFaces=(i.data[1] as bitarray)
+		i.obj.selectedFaces=(i.data[4] as bitarray)
 	)catch(
 		print (i.obj.name + " is not a mesh(ShowOverlapFaces).")
 	)
@@ -35,5 +35,16 @@ fn ShowUVOverRange i=(
 		addmodifier i.obj uvw
 	)
 	subobjectLevel=1;
-	uvw.selectVertices (i.data[1] as bitarray) 
+	uvw.selectVertices (i.data[5] as bitarray) 
+)
+
+fn ShowNoSmoothGroupFace i =(
+	clearselection();
+	select i.obj
+	subobjectLevel=3;
+		try(
+		i.obj.selectedFaces=(i.data[7] as bitarray)
+	)catch(
+		print (i.obj.name + " is not a mesh(ShowNoSmoothGroupFace).")
+	)
 )
