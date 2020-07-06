@@ -48,3 +48,22 @@ fn ShowNoSmoothGroupFace i =(
 		print (i.obj.name + " is not a mesh(ShowNoSmoothGroupFace).")
 	)
 )
+
+fn ShowBonesPoseSEUnmatch i=(
+	clearselection();
+	subobjectLevel=0;
+	for bn in i.data[8] do(
+		selectmore bn
+	)
+)
+
+fn ShowTextureSizeUnmatch i=(
+	clearselection();
+	subobjectLevel=0;
+	select i.obj;
+	local info="";
+	for map in i.data[9] do(
+		info=info+map+"\n";
+	)
+	Messagebox info;
+)

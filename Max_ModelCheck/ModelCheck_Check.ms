@@ -145,3 +145,66 @@ fn SmoothGroupCheck i=(
 		i.data[7]=l
 	)
 )
+
+
+
+fn BonePoseCheck i=(
+	local sk=i.obj.modifiers[Skin];
+	if sk!=undefined then(
+		local count=skinOps.GetNumberBones sk
+		local lss=#();
+		local r=#();
+		local ori=currentTime
+		print (i.obj.name + " have "+(count as string) +" bones.")
+		local bonesNameList = for bn=1 to count collect (skinOps.GetBoneName sk bn 0)
+		
+		sliderTime=animationRange.start;
+		for bn in bonesNameList do(
+			local b=getnodebyname bn
+			append lss b.transform
+		)
+		
+		sliderTime=animationRange.end;
+		for bn=1 to count do(
+			local b=getnodebyname bonesNameList[bn]
+			if b.transform!=lss[bn] do(
+				append r b
+			)
+		)
+		sliderTime=ori;
+		
+		if(r.count>0) do(
+			append i.result_type 8
+			i.data[8]=r
+		)
+		
+	)else(
+		print (i.obj.name + " is not a skin.")
+	)
+)
+
+fn TextureSizeCheck i preset=(
+	--local info = getBitmapInfo (i.obj.material.diffuseMap.filename);
+	--local size=[info[3],info[4]];
+	--print size;
+	
+	if(preset==undefined or preset.count<=0) do return 0;
+	
+	local arrmap=usedMaps(i.obj);
+	local ls=#()
+	for map in arrmap do(
+		local info = getBitmapInfo (map);
+		local isMatch = false;
+		for p in preset do(
+			if(p[1]==info[3] and p[2]==info[4]) do isMatch=true
+		)
+		if(not isMatch) do(
+			append ls map
+		)
+	)
+	
+	if(ls.count>0) then(
+		append i.result_type 9
+		i.data[9]=ls
+	)
+)

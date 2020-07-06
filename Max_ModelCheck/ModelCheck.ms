@@ -29,6 +29,8 @@ fn CheckStart t=(
 			if CheckSetting.cbUVRange.checked do UVRangeCheck(curOpObj)
 			if CheckSetting.cbOpenEdge.checked do OpenEdgeCheck(curOpObj)
 			if CheckSetting.cbSmooth.checked do SmoothGroupCheck(curOpObj)
+			if CheckSetting.cbBonePose.checked do BonePoseCheck(curOpObj)
+			if CheckSetting.cbTexSize.checked do TextureSizeCheck curOpObj TextureSizeCheckSetting.PreSet
 			if(curOpObj.result_type.count>0) then
 			(
 				append rn i.name
@@ -83,6 +85,8 @@ rollout CheckResultPanel "Result" width:800 height:500
 				5:(append l "UV over range")
 				6:(append l "Open edge")
 				7:(append l "Not full smooth group")
+				8:(append l "Bones unmatch")
+				9:(append l "Texture unmatch")
 				101:(append l "Unit is not corresponding")
 				102:(append l "Faces count over")
 			)
@@ -96,6 +100,8 @@ rollout CheckResultPanel "Result" width:800 height:500
 			"UV overlap":(ShowOverlapFaces(ro[robjs.selection]))
 			"UV over range":(ShowUVOverRange(ro[robjs.selection]))
 			"Not full smooth group":(ShowNoSmoothGroupFace(ro[robjs.selection]))
+			"Bones unmatch":(ShowBonesPoseSEUnmatch(ro[robjs.selection]))
+			"Texture unmatch":(ShowTextureSizeUnmatch(ro[robjs.selection]))
 		)
 	)
 	
@@ -112,7 +118,7 @@ rollout CheckSetting "Setting"
 	checkbox cbFaceCount "Face Count" checked:false
 	checkbox cbTexSize "Texture Size" checked:false across:3
 	checkbox cbSmooth "Smooth Group" checked:false
-	label lb ""
+	checkbox cbBonePose "BonePose" checked:false
 	)
 	group "Check Operation"(
 	button btnCheckStart "Check" across:2
@@ -157,11 +163,40 @@ rollout FaceCountCheckSetting "FaceCount"
 	--spFaceCount.value = 2000;
 )
 
+rollout TextureSizeCheckSetting "TextureSize"
+(
+	local PreSet=#();
+	local itemsSet=#();
+	group "Setting"(
+	spinner WidthSet "Width" type:#integer scale:2 range:[32,8192,512] across:4
+	spinner HeightSet "Height" type:#integer scale:2 range:[32,8192,512]
+	button btnAdd "+"
+	button btnRemove "-"
+	)
+	listbox rs "Rules" height:10
+	on btnAdd pressed do(
+		local seteach=[WidthSet.value,HeightSet.value];
+		append PreSet seteach
+		append itemsSet (seteach as string)
+		rs.items=itemsSet;
+	)
+	
+	on btnRemove pressed do(
+		if(rs.PreSet.count>0) then(
+			deleteItem PreSet rs.selection;
+			deleteItem itemsSet rs.selection;
+			rs.items=itemsSet;
+		)
+
+	)
+)
+
 MainRolloutFolater = newRolloutFloater "ModelCheck" 800 500
 addRollout CheckSetting MainRolloutFolater rolledUp:false
-addRollout BaseCheck MainRolloutFolater rolledUp:true
+--addRollout BaseCheck MainRolloutFolater rolledUp:true
 addRollout SceneDataCheckSetting MainRolloutFolater rolledUp:true
 addRollout FaceCountCheckSetting MainRolloutFolater rolledUp:true
+addRollout TextureSizeCheckSetting MainRolloutFolater rolledUp:true
 --addRollout test MainRolloutFolater
 
 
