@@ -29,6 +29,13 @@ fn BaseCheckOnSelect i=(
 )
 
 fn UVOverlapCheck i=(
+	try(
+	local faces=GetFaceSelection i
+	if(faces==undefined or faces.count<=0) do return 0;
+		)catch(
+		return 0;
+	)
+	
 	local isAddNew;
 	local uvw=i.obj.modifiers[Unwrap_UVW];
 	if uvw!=undefined then(
@@ -41,12 +48,14 @@ fn UVOverlapCheck i=(
 	subobjectLevel=3;
 	uvw.selectOverlappedFaces();
 	local uvwface=uvw.getSelectedFaces();
-	print uvwface;
+	if uvwface != undefined then (
+	
 	local faces = for f in uvwface collect f
 	if faces.count>0 do (
 		print (i.obj.name+ " overlap uv is "+(faces.count as string))			
 		append i.result_type 4
 		i.data[4]=faces
+	)
 	)
 	--subobjectLevel=0
 	if isAddNew do deletemodifier i.obj uvw
@@ -83,7 +92,7 @@ fn OpenEdgeCheck i=(
 			local faces = for i in i.obj.selectedFaces collect i.index
 			if faces.count>0 do(
 				for f in faces do(
-					print f
+					--print f
 					append l f
 				)
 				append i.result_type 6
@@ -109,11 +118,14 @@ fn FacesCountCheck data=(
 	clearselection();
 	max select all;
 	local count=0;
-	for i in selection do(
-		if(i.Faces!=undefined)then(
-			count+=i.Faces.count;
-		)
-	)
+/* 	for i in selection do(
+* 		faces=GetFaceSelection i 
+* 		count+=faces.count;
+* 	)
+*/
+	local fp=fileProperties.getItems "Mesh Totals"
+	count=(filterString fp[2] " ")[2] as integer
+	
 	--print (fileProperties.getItems "Mesh Totals")[2]
 	if count>data.data[1] then(
 		append data.result_type 102
