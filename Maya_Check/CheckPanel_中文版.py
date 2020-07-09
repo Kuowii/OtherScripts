@@ -517,13 +517,13 @@ Num1 = Num2 = Num3 = Num4 = Num5 = Num6 = Num7 = Num8 = Num9 = Num10 = Num11 = N
 display1 = display2 = display3 = display4 = display5 = display7 = display8 = display9 = display10 =display11 = 0
 
 myWin = cmds.window(title='Check Panel v1.0', w=250, h=550)
-col=cmds.columnLayout()
+col=cmds.rowColumnLayout()
 cmds.text(version + '中文版');
 cmds.setParent(col)
 
 # Sense Check
 cmds.frameLayout(label = "1:Sense Check",w=250,cll=True)
-cmds.columnLayout()
+rowp=cmds.rowColumnLayout()
 
 cmds.checkBox('checkBox_Unit', label='单位', v=0, cc='checkBoxs()')
 cmds.checkBox('checkBox_Fc', label='面数', v=0, cc='checkBoxs()')
@@ -531,9 +531,11 @@ fc = cmds.textFieldGrp(label='Limit  ',cw2=(40,50));
 
 cmds.checkBox('checkBox_Texsize', label='贴图尺寸', v=0, cc='checkBoxs()')
 size_field = cmds.textFieldGrp(label='Scale ', text="1024*1024", cw2=(40,80));
-cmds.button(label='Get Scale', w=80, command=get_texsize)
-cmds.button(label='Del Scale', w=80, command=del_texsize)
-sco=cmds.textScrollList( h=60 )
+cmds.rowColumnLayout(nc=2,cs=[(2,90)],p=rowp)
+cmds.button(label='Get Scale',w=80, command=get_texsize)
+cmds.button(label='Del Scale',w=80, command=del_texsize)
+cmds.rowColumnLayout(nr=1,p=rowp)
+sco=cmds.textScrollList( h=60,w=250)
 cmds.separator( height=5, style='out' )
 cmds.setParent(col)
 
