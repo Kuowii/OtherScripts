@@ -182,7 +182,7 @@ rollout TextureSizeCheckSetting "TextureSize"
 	)
 	
 	on btnRemove pressed do(
-		if(rs.PreSet.count>0) then(
+		if(PreSet.count>0) then(
 			deleteItem PreSet rs.selection;
 			deleteItem itemsSet rs.selection;
 			rs.items=itemsSet;
