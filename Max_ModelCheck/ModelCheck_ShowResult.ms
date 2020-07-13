@@ -1,18 +1,30 @@
 fn ShowOpenEdge i=(
 	clearselection();
 	select i.obj
-	subobjectLevel=3
-	try(
-		i.obj.selectedFaces=(i.data[6] as bitarray)
-	)catch(
-		print(i.obj.name+" is not a mesh(ShowOpenEdge).")
+	modPanel.setCurrentObject i.obj.baseObject
+	subobjectLevel=2
+	if classof i.obj == editable_poly or classof i.obj==PolyMeshObject then(
+		local edges = polyOp.getEdgesUsingVert i.obj i.data[6]
+		i.obj.selectedEdges=edges
+	)else if classof i.obj == editable_mesh then(
+		i.obj.selectedEdges=(i.data[6] as bitarray)
+	)else(
+		format "% is % ,can not do ShowOpenEdge\n" i.obj.name (classof i.obj)
+		return 0;
 	)
 )
 
 fn ShowOverlapFaces i=(
 	clearselection();
 	select i.obj
-	subobjectLevel=3
+	if classof i.obj == editable_poly then(
+		subobjectLevel=4
+	)else if classof i.obj == editable_mesh then(
+		subobjectLevel=3
+	)else(
+		format "% is % ,can not do ShowOverlapFaces\n" i.obj.name (classof i.obj)
+		return 0;
+	)
 	try(
 		i.obj.selectedFaces=(i.data[4] as bitarray)
 	)catch(
@@ -41,7 +53,15 @@ fn ShowUVOverRange i=(
 fn ShowNoSmoothGroupFace i =(
 	clearselection();
 	select i.obj
-	subobjectLevel=3;
+	modPanel.setCurrentObject i.obj.baseObject
+	if classof i.obj == editable_poly or classof i.obj==PolyMeshObject then(
+		subobjectLevel=4;
+	)else if classof i.obj == editable_mesh then(
+		subobjectLevel=3;
+	)else(
+		format "% is % ,can not do ShowNoSmoothGroupFace\n" i.obj.name (classof i.obj)
+		return 0;
+	)
 		try(
 		i.obj.selectedFaces=(i.data[7] as bitarray)
 	)catch(

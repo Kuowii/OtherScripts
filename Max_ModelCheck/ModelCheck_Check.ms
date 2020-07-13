@@ -28,14 +28,7 @@ fn BaseCheckOnSelect i=(
 		)
 )
 
-fn UVOverlapCheck i=(
-	try(
-	local faces=GetFaceSelection i
-	if(faces==undefined or faces.count<=0) do return 0;
-		)catch(
-		return 0;
-	)
-	
+fn UVOverlapCheck i=(	
 	local isAddNew;
 	local uvw=i.obj.modifiers[Unwrap_UVW];
 	if uvw!=undefined then(
@@ -47,9 +40,9 @@ fn UVOverlapCheck i=(
 	)
 	subobjectLevel=3;
 	uvw.selectOverlappedFaces();
+	uvw.selectOverlappedFaces();
 	local uvwface=uvw.getSelectedFaces();
-	if uvwface != undefined then (
-	
+	if uvwface != undefined then (	
 	local faces = for f in uvwface collect f
 	if faces.count>0 do (
 		print (i.obj.name+ " overlap uv is "+(faces.count as string))			
@@ -66,10 +59,24 @@ fn point3IsOutRange p=(
 )
 
 fn UVRangeCheck i=(
+	local l=#()
+	local vertsCount,isPoly = false;
+	--print("obj is "+(classof i.obj) as string);
+	if classof i.obj == editable_poly then(
+		vertsCount=polyop.getNumMapVerts i.obj 1
+		isPoly=true;
+		
+	)else if classof i.obj == editable_mesh then(
+		vertsCount=i.obj.numtverts;
+		isPoly=false;
+	)else(
+		format "% is % ,can not do UVRangeCheck\n" i.obj.name (classof i.obj)
+		return 0;
+	)
+	
 	try(
-			local l=#()
-			for v=1 to i.obj.numtverts do(
-			local p = getTVert i.obj v
+			for v=1 to vertsCount do(
+			local p = if isPoly then polyop.getMapVert i.obj 1 v else getTVert i.obj v
 			if not point3IsOutRange(p) do(
 				append l v
 			)
@@ -78,30 +85,45 @@ fn UVRangeCheck i=(
 				append i.result_type 5
 				i.data[5]=l
 			)
-	)catch(
-		print(i.obj.name+" is not a mesh.")
+	)catch (
+		--format "Error: % (% line:%)\n" (getCurrentException()) (getErrorSourceFileName()) (getErrorSourceFileLine())
+		print(i.obj.name+" UVRangeCheck fail.")
 	)
 )
 
 fn OpenEdgeCheck i=(
 		try(
 			local stl = STL_Check();
-			local l=#();
+			local l=#(),isPoly=false;
+			
+			if classof i.obj == editable_poly then(
+				isPoly=true;
+			)else if classof i.obj == editable_mesh then(
+				isPoly =false;
+			)else(
+				format "% is % ,can not do OpenEdgeCheck\n" i.obj.name (classof i.obj)
+				return 0;
+			)
+			stl.Select_Faces =2;
 			addmodifier i.obj stl
 			stl.Check_Now=1
-			local faces = for i in i.obj.selectedFaces collect i.index
-			if faces.count>0 do(
-				for f in faces do(
+			local edges = for i in i.obj.selectedEdges collect i.index
+			if edges.count>0 do(
+				for f in edges do(
 					--print f
 					append l f
 				)
 				append i.result_type 6
-				i.data[6]=faces
+				if isPoly then(
+					i.data[6]=meshop.getVertsUsingEdge i.obj i.obj.selectedEdges
+				)else(
+					i.data[6]=edges
+				)
 			)
 			deletemodifier i.obj stl
 			
 	)catch(
-		print(i.obj.name+" is not a mesh.")
+		print(i.obj.name+" OpenEdgeCheck fail.")
 	)
 	
 )
@@ -136,17 +158,23 @@ fn FacesCountCheck data=(
 )
 
 fn SmoothGroupCheck i=(
-	local count;
+	local count,getFSG;
 	local l=#();
-	try(
+	
+	if classof i.obj == editable_poly then(
+		count=polyop.getNumFaces i.obj
+		getFSG=polyop.getFaceSmoothGroup;
+		
+	)else if classof i.obj == editable_mesh then(
 		count = i.obj.numfaces;
-	)catch(
-		print(i.obj.name+" is not a mesh.")
+		getFSG=getFaceSmoothGroup;
+	)else(
+		format "% is % ,can not do SmoothGroupCheck\n" i.obj.name (classof i.obj)
 		return 0;
 	)
 	
 	for index=1 to count do(
-		local sgv=getFaceSmoothGroup i.obj index
+		local sgv= getFSG i.obj index
 		if( sgv ==0) then(
 			append l index
 		)

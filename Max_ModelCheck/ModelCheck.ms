@@ -1,6 +1,8 @@
 include "ModelCheck_ShowResult.ms"
 include "ModelCheck_Check.ms"
 
+Version = "ModelCheck 1.2 by Wings";
+
 struct CheckResultData(
 	obj,
 	data=#(),
@@ -10,11 +12,14 @@ struct CheckResultData(
 global rn=#();
 global ro=#();
 global curOpObj;
-
+	
 fn CheckStart t=(
 	--messagebox ("Check start " + (t as string))
 	rn=#()
 	ro=#()
+	try(
+	destroydialog CheckResultPanel
+	)catch(print "CheckResultPanel not create.")
 	local sel=#();
 		for i in selection do(
 			append sel i
@@ -70,6 +75,7 @@ fn CheckStart t=(
 
 rollout CheckResultPanel "Result" width:800 height:500
 (
+	label lbVersion Version align:#right
 	listbox robjs "Objects" width:200 height:30 across:2 items:rn
 	listbox ops "Operations" width:500 height:30 offset:[-150,0]
 	on robjs selected i do(
@@ -109,6 +115,7 @@ rollout CheckResultPanel "Result" width:800 height:500
 
 rollout CheckSetting "Setting"
 (
+	label lbVersion Version align:#right
 	group "Check Item"(
 	checkbox cbBase "BaseCheck" checked:true across:3
 	checkbox cbUVLap "UV Overlap" checked:false
@@ -191,7 +198,11 @@ rollout TextureSizeCheckSetting "TextureSize"
 	)
 )
 
-MainRolloutFolater = newRolloutFloater "ModelCheck" 800 500
+try(
+	closeRolloutFloater  MainRolloutFolater
+)catch(print "MainRolloutFolater not create.")
+
+MainRolloutFolater = newRolloutFloater Version 800 500
 addRollout CheckSetting MainRolloutFolater rolledUp:false
 --addRollout BaseCheck MainRolloutFolater rolledUp:true
 addRollout SceneDataCheckSetting MainRolloutFolater rolledUp:true
