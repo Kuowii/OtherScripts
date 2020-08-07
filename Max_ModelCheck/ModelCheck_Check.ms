@@ -187,7 +187,7 @@ fn SmoothGroupCheck i=(
 )
 
 
-
+-- ???????
 fn BonePoseCheck i=(
 	local sk=i.obj.modifiers[Skin];
 	if sk!=undefined then(
@@ -223,6 +223,7 @@ fn BonePoseCheck i=(
 	)
 )
 
+-- ??????
 fn TextureSizeCheck i preset=(
 	--local info = getBitmapInfo (i.obj.material.diffuseMap.filename);
 	--local size=[info[3],info[4]];
@@ -248,3 +249,32 @@ fn TextureSizeCheck i preset=(
 		i.data[9]=ls
 	)
 )
+
+-- UV?????
+fn UVAreaCheck i preset=(
+	local isAddNew;
+	local uvw=i.obj.modifiers[Unwrap_UVW];
+	if uvw!=undefined then(
+		isAddNew=false;
+	)else(
+		isAddNew=true;
+		uvw=Unwrap_UVW()
+		addmodifier i.obj uvw
+	)
+	subobjectLevel=3;
+	max select all
+	local uvwface=uvw.getSelectedFaces();
+	if uvwface != undefined then (	
+		local x,y,w,h,areauv,areag;
+		uvw.getArea uvwface &x &y &w &h &areauv &areag
+		format "x=%,y=%,w=%,h=%,uvw=%,geom=%\n" x y w h areauv areag
+		local ss = (format ".2%" areauv)
+		print ss
+		if(areauv<preset) do(
+			append i.result_type 10
+			i.data[10]=areauv
+		)
+	)
+	--subobjectLevel=0
+	if isAddNew do deletemodifier i.obj uvw
+	)

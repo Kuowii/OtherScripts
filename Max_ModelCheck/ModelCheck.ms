@@ -36,6 +36,7 @@ fn CheckStart t=(
 			if CheckSetting.cbSmooth.checked do SmoothGroupCheck(curOpObj)
 			if CheckSetting.cbBonePose.checked do BonePoseCheck(curOpObj)
 			if CheckSetting.cbTexSize.checked do TextureSizeCheck curOpObj TextureSizeCheckSetting.PreSet
+			if CheckSetting.cbUVArea.checked do UVAreaCheck curOpObj UVAreaUsedCheckSetting.spAreaMin.value
 			if(curOpObj.result_type.count>0) then
 			(
 				append rn i.name
@@ -93,6 +94,7 @@ rollout CheckResultPanel "Result" width:800 height:500
 				7:(append l "Not full smooth group")
 				8:(append l "Bones unmatch")
 				9:(append l "Texture unmatch")
+				10:(append l "UV used less")
 				101:(append l "Unit is not corresponding")
 				102:(append l "Faces count over")
 			)
@@ -108,6 +110,7 @@ rollout CheckResultPanel "Result" width:800 height:500
 			"Not full smooth group":(ShowNoSmoothGroupFace(ro[robjs.selection]))
 			"Bones unmatch":(ShowBonesPoseSEUnmatch(ro[robjs.selection]))
 			"Texture unmatch":(ShowTextureSizeUnmatch(ro[robjs.selection]))
+			--"UV used less":(Messagebox ("UV used:"+( format "%" ro[robjs.selection].data[10]))))
 		)
 	)
 	
@@ -120,12 +123,14 @@ rollout CheckSetting "Setting"
 	checkbox cbBase "BaseCheck" checked:true across:3
 	checkbox cbUVLap "UV Overlap" checked:false
 	checkbox cbUVRange "UV Range" checked:false
-	checkbox cbOpenEdge "Open Edge" checked:false across:3
+	checkbox cbUVArea "UV Area" checked:false across:3
+	checkbox cbOpenEdge "Open Edge" checked:false 
 	checkbox cbSceneData "Scene Data" checked:false 
-	checkbox cbFaceCount "Face Count" checked:false
-	checkbox cbTexSize "Texture Size" checked:false across:3
-	checkbox cbSmooth "Smooth Group" checked:false
+	checkbox cbFaceCount "Face Count" checked:false across:3
+	checkbox cbTexSize "Texture Size" checked:false 
+	checkbox cbSmooth "Smooth Group" checked:false across:3
 	checkbox cbBonePose "BonePose" checked:false
+	label lbEmpty ""
 	)
 	group "Check Operation"(
 	button btnCheckStart "Check" across:2
@@ -198,6 +203,12 @@ rollout TextureSizeCheckSetting "TextureSize"
 	)
 )
 
+rollout UVAreaUsedCheckSetting "UV Area Used"
+(
+	spinner spAreaMin "Area" type:#float scale:0.5 range:[0.05,1,0.7]
+	--spFaceCount.value = 2000;
+)
+
 try(
 	closeRolloutFloater  MainRolloutFolater
 )catch(print "MainRolloutFolater not create.")
@@ -208,6 +219,7 @@ addRollout CheckSetting MainRolloutFolater rolledUp:false
 addRollout SceneDataCheckSetting MainRolloutFolater rolledUp:true
 addRollout FaceCountCheckSetting MainRolloutFolater rolledUp:true
 addRollout TextureSizeCheckSetting MainRolloutFolater rolledUp:true
+addRollout UVAreaUsedCheckSetting MainRolloutFolater rolledUp:true
 --addRollout test MainRolloutFolater
 
 
