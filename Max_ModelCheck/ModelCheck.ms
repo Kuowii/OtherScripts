@@ -1,7 +1,7 @@
 include "ModelCheck_ShowResult.ms"
 include "ModelCheck_Check.ms"
 
-Version = "ModelCheck 1.2 by Wings";
+Version = "ModelCheck 1.3 by Wings";
 
 struct CheckResultData(
 	obj,
@@ -110,7 +110,11 @@ rollout CheckResultPanel "Result" width:800 height:500
 			"Not full smooth group":(ShowNoSmoothGroupFace(ro[robjs.selection]))
 			"Bones unmatch":(ShowBonesPoseSEUnmatch(ro[robjs.selection]))
 			"Texture unmatch":(ShowTextureSizeUnmatch(ro[robjs.selection]))
-			--"UV used less":(Messagebox ("UV used:"+( format "%" ro[robjs.selection].data[10]))))
+			"UV used less":(
+				local percent = ro[robjs.selection].data[10]*100
+				local str=formattedPrint percent format:"2.2f"
+				messagebox ("UV used is "+str+"%")
+			)
 		)
 	)
 	

@@ -223,7 +223,6 @@ fn BonePoseCheck i=(
 	)
 )
 
--- ??????
 fn TextureSizeCheck i preset=(
 	--local info = getBitmapInfo (i.obj.material.diffuseMap.filename);
 	--local size=[info[3],info[4]];
@@ -249,8 +248,7 @@ fn TextureSizeCheck i preset=(
 		i.data[9]=ls
 	)
 )
-
--- UV?????
+ -- UV used area percent
 fn UVAreaCheck i preset=(
 	local isAddNew;
 	local uvw=i.obj.modifiers[Unwrap_UVW];
