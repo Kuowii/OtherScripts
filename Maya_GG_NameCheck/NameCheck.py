@@ -57,15 +57,20 @@ def Check(raw,high):
         MessageBox("高模或粗模未设置！");
     else:
         print('check: high={0},raw={1}'.format(high,raw));
-        errorList=[];
+        errorListRaw=[];
+        errorListHigh=[];
         childrenRaw = cmds.listRelatives(raw,children=True, fullPath=False) or []
         childrenHigh = cmds.listRelatives(high,children=True, fullPath=False) or []
         for child in childrenRaw:
             if(not IsInArr(child,childrenHigh)):
-                errorList.append(child);
-        if(len(errorList)>0):
-            print "error count = ",len(errorList)
-            ListError(errorList);
+                errorListRaw.append(child);
+                
+        for child in childrenHigh:
+            if(not IsInArr(child,childrenRaw)):
+                errorListHigh.append(child);
+                
+        if(len(errorListRaw)>0 or len(errorListHigh)>0):
+            ListError(errorListRaw,errorListHigh);
         else:
             MessageBox("命名完全一致！");
     return;
@@ -74,19 +79,30 @@ class SelBtn:
     btn=None;
     def create(self,target):
         self.t=target;
-        btn=cmds.button();
-        cmds.button(btn,l=target,edit=True,command=lambda x:cmds.select(target,hi=True,add=False));
+        self.btn=cmds.button();
+        cmds.button(self.btn,l=target,edit=True,command=lambda x:cmds.select(target,hi=True,add=False));
+        
+    def setcolor(self,col):
+        cmds.button(self.btn,edit=True,bgc=col);
 
-def ListError(errorList):
+def ListError(errorListRaw,errorListHigh):
     errorWin=cmds.window();
     cmds.window(errorWin,t="Result", edit=True);
     cmds.columnLayout(rs=5);
-    max = len(errorList);
+    max = len(errorListRaw);
     bts=[]
     for index in range(max):
         btn=SelBtn();
-        btn.create(errorList[index]);
+        btn.create(errorListRaw[index]);
         bts.append(btn);
+        
+    max = len(errorListHigh);
+    for index in range(max):
+        btn=SelBtn();
+        btn.create(errorListHigh[index]);
+        bts.append(btn);
+        btn.setcolor([1,0,0]);
+        
     cmds.showWindow(errorWin);
     return;
 
