@@ -15,9 +15,10 @@ class MessageBox:
    def close(self,sender):
      cmds.deleteUI(self.msg);
 
-def getFaceArea(face):
-    r = cmds.polyEvaluate(face,ufa=True );
-    return r[0]**0.5;
+def getFaceTexelDensity(face,ts):
+    ufa = cmds.polyEvaluate(face,ufa=True );
+    wfa = cmds.polyEvaluate(face,wfa=True );
+    return (ts*ufa[0]/wfa[0])**0.5;
     
 def checkTdStart(self):
 
@@ -34,16 +35,17 @@ def checkTdStart(self):
         MessageBox("未选中对象！");
         return;
     
-    r=[]
+    r=[];
+    texSize = tsize*tsize;
     for f in selected:
-        fa = getFaceArea(f);
-        if abs(fa*tsize-td)>offset:
+        fa = getFaceTexelDensity(f,texSize);
+        if abs(fa-td)>offset:
             r.append(f);
     cmds.select(cl=True);
     cmds.select(r);
     MessageBox(" 选中 %d 个面" % len(r))
 
-version = "EVO UV TD Check v1.0";
+version = "EVO UV TD Check v2.0";
 MainWin=cmds.window(version);
 cmds.window( MainWin, edit=True, widthHeight=(400, 150) );
 cmds.columnLayout();
