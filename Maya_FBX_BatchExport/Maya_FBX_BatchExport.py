@@ -5,8 +5,8 @@ import threading
 
 mas=[];
 fbxs=[];
-targetPatn=r"E:\Work\B12\fbx";
-for root,dirs,files in os.walk(r"E:\Work\B12\maya"):
+targetPatn=r"E:\Work\B12\Colossus-20201030\fbx";
+for root,dirs,files in os.walk(r"E:\Work\B12\Colossus-20201030\maya"):
     for file in files:
         fileName=os.path.splitext(file);
         if  fileName[1]== '.ma':
