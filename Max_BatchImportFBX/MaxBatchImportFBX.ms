@@ -41,16 +41,41 @@ fn getSelectionArrary=(
 	return sel
 )
 
-fn getObjAnimationLength obj=(
-	if obj==undefined do return 0
-	sortKeys obj.controller
-	local num_keys = numkeys obj.position.controller
-	return num_keys
+fn getObjAnimationLength objs=(
+	if objs==undefined do return 0
+	local tobjs = objs
+	
+	if (classOf tobjs != Array )do (
+		tobjs = #()
+		append tobjs objs
+	)
+	
+	local len = tobjs.count
+	
+	local endtime = 0
+	
+	for i = 1 to len do
+	(
+		local obj = tobjs[i]
+		
+		sortKeys obj.controller
+		
+		local num_keys = numkeys obj.position.controller
+		local keytiem = 0
+		
+		for j = 1 to num_keys do
+		(
+			key_time = getkeytime obj.position.controller j
+			if key_time > endtime then endtime = key_time
+		)
+	)
+	
+	return endtime
 )
 
 fn saveFBXAnimationTo fbxFull xafFull =(
 		importFile fbxFull #noPrompt using:FBXIMP
-		local nodes = (for obj in objects where (classof obj == BoneGeometry) collect obj)
+		local nodes = (for obj in objects where (classof obj == BoneGeometry or classof obj ==  Dummy) collect obj)
 		local root = nodes[1];
 		local userAttributes = #("")
 		local userValues = #("")
@@ -112,15 +137,14 @@ fn mergeInOneScene infos fileFull=(
 	
 	deleteKeys objects #allKeys
 	
-	local nodes = (for obj in objects where (classof obj == BoneGeometry) collect obj)
-		
+	local nodes = (for obj in objects where (classof obj == BoneGeometry or classof obj ==  Dummy) collect obj)
+	
 	for info in infos do(
 		LoadSaveAnimation.loadAnimation info.xaf nodes insert:true
 	)
 		
-	local root = nodes[1];
-	local frameCount = getObjAnimationLength root
-	animationRange = interval animationRange.start (frameCount-1)
+	local frameCount = getObjAnimationLength nodes
+	animationRange = interval animationRange.start frameCount
 )
 
 fn main=(
@@ -137,3 +161,4 @@ fn main=(
 )
 
 main()
+
