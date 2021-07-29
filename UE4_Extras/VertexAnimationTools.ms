@@ -91,8 +91,8 @@ macroScript EpicTools_TexMorpher category:"Epic Tools" buttontext:"Vertex Animat
 		/*************************************************************************************************************************************************
 		End base function library
 		***************************************************************************************************************************************************/
-			global originalMesh -- =$husky_arms001
-			global copyBaseMesh 
+			global originalMesh
+			global copyBaseMesh
 			global numberofVerts 
 			global originalMeshVertPositions = #()
 			global MorphTargetArray
@@ -104,10 +104,16 @@ macroScript EpicTools_TexMorpher category:"Epic Tools" buttontext:"Vertex Animat
 			global MorphTargetProgressPercentage = 0.0
 			global masterMorphArray=#()
 			global noMeshesArray=#(" No meshes processed" as string)
+			
+			local KeyFramesSetting_Floater = undefined
+			local KeyFramesForce=#()
+			
+			
 			radioButtons selectionOptions "Animation Options" labels:#("Animated Meshes", "Key Frame Meshes") default:1 
 			checkbox captureAbsolutePositions "Capture Absolute Positions" tooltip:"This is an advanced feature. Use this to capture the verts' absolute positions. This data, when used with the morph target material functions, requires that world position be subtracted from the material function's world position offset output and the actor position to be added back to the result before being used in the world position offset node. This feature may reduce your morph target's effective range but will allow users to generate additional advanced effects."
 			group "Animated Meshes" (
 				button processSelfAnimatedMeshes "Process Animated Meshes"
+				button btnSetAnimationKeyFrames "Set Key Frames"
 				spinner spinnerAnimationRangeStart "Anim Start" type:#integer range:[0,1000000,animationRange.start] 
 				spinner spinnerAnimationRangeEnd "Anim End" type:#integer range:[0,1000000,animationRange.end] 
 				spinner spinnerAnimationRate "Frame Skip" type:#integer range:[0,1000000,0]
@@ -263,16 +269,23 @@ macroScript EpicTools_TexMorpher category:"Epic Tools" buttontext:"Vertex Animat
 					progressStart "Creating Morph Targets" 
 					FrameArray=#()
 					NumberOfFrames = floor (spinnerAnimationRangeEnd.value-spinnerAnimationRangeStart.value) --/(spinnerAnimationRate.value+1)
-					for i=0 to NumberOfFrames by (spinnerAnimationRate.value+1) do (
-						newtime = spinnerAnimationRangeStart.value+i 
-						newCopy=at time newtime snapshot modelToSnap
+				
+				local needFrames = (for i=0 to NumberOfFrames by (spinnerAnimationRate.value+1) collect spinnerAnimationRangeStart.value+i )
+				join needFrames KeyFramesForce
+				makeUniqueArray needFrames
+				sort needFrames
+				
+				for newFrameTime in needFrames do(
+						newCopy=at time newFrameTime snapshot modelToSnap
+						
+						if not isAutoRemoveTempMesh.checked do newCopy.name = newCopy.name+"_"+(newFrameTime as string) + "f"
 						
 						if isResetFaceNormal.checked do(
 							meshop.unifyNormals newCopy #{1..newCopy.numfaces}
 						)
 						--!convertto newCopy editable_poly
 						append FrameArray newCopy
-						updateProgAmount i NumberOfFrames
+						updateProgAmount newFrameTime NumberOfFrames
 					)
 					progressEnd()
 				FrameArray
@@ -339,6 +352,40 @@ macroScript EpicTools_TexMorpher category:"Epic Tools" buttontext:"Vertex Animat
 			)
 			
 			
+		/*********************************************************************
+		KeyFrameSettingRollout
+		*********************************************************************/
+		
+		rollout KeyFramesSettingRollout "KeyFramesSetting" (
+			spinner spNewKey range:[0,spinnerAnimationRangeEnd.value,1] type:#integer width:50 offset:[0,2.5] across:3
+			button btnAddKey "+"
+			button btnRmoveKey "-"
+			
+			ListBox lb "Frames" items:(for kff in KeyFramesForce collect kff as string)
+			
+			button btnConfirmSetting "OK"
+			
+			on btnConfirmSetting pressed do (
+				CloseRolloutFloater KeyFramesSetting_Floater
+				KeyFramesSetting_Floater = undefined
+				sort KeyFramesForce
+			)
+			
+			on btnAddKey pressed do (
+				local newKeyNum = spNewKey.value as float
+				appendIfUnique KeyFramesForce newKeyNum
+				sort KeyFramesForce
+				lb.items = (for kff in KeyFramesForce collect kff as string)
+			)
+			
+			on btnRmoveKey pressed do (
+				local lbs = lb.selection
+				if lbs !=0 then(
+					deleteitem KeyFramesForce lb.selection
+					lb.items = (for kff in KeyFramesForce collect kff as string)
+				)
+			)
+		)
 			
 		/*********************************************************************
 		UI functions
@@ -457,6 +504,15 @@ macroScript EpicTools_TexMorpher category:"Epic Tools" buttontext:"Vertex Animat
 					)
 				)
 				ResumeEditing()
+			)
+			
+			
+			
+			on btnSetAnimationKeyFrames pressed do(
+				if KeyFramesSetting_Floater != undefined then CloseRolloutFloater KeyFramesSetting_Floater
+				KeyFramesSetting_Floater = newRolloutFloater "" 175 500
+				addRollout KeyFramesSettingRollout KeyFramesSetting_Floater
+				
 			)
 			
 			on selectCurrentSelectedMeshes pressed do (
