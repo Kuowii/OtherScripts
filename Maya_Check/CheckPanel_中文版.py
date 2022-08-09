@@ -9,7 +9,7 @@ version = "Check Panel v1.0 ";
 reload(sys)
 sys.setdefaultencoding('utf-8')
 
-# ½â¾öÖĞÎÄÎÊÌâ
+# è§£å†³ä¸­æ–‡é—®é¢˜
 def utf_8String(StringT):
     utf_8String = StringT
     utf_8String.encode('utf-8')
@@ -24,19 +24,19 @@ import pymel.core as pm
 version = "Check Panel v1.0 ";
 
 
-# ¼ì²éµ±Ç°µ¥Î»ÊÇ·ñÎªCM»òMeter
+# æ£€æŸ¥å½“å‰å•ä½æ˜¯å¦ä¸ºCMæˆ–Meter
 def UnitCheck(*args):
     unit = cmds.currentUnit(query=True, linear=True)
     if unit == "cm":
-        unitwin = "µ±Ç°µ¥Î»£ºCM"
+        unitwin = "å½“å‰å•ä½ï¼šCM"
     elif unit == "m":
-        unitwin = "µ±Ç°µ¥Î»£ºMeter"
+        unitwin = "å½“å‰å•ä½ï¼šMeter"
     else:
-        unitwin = "µ±Ç°µ¥Î»²»ÊÇCM»òMeter"
+        unitwin = "å½“å‰å•ä½ä¸æ˜¯CMæˆ–Meter"
     return unitwin
 
 
-# ¼ì²éÄ£ĞÍ×ÜÃæÊı
+# æ£€æŸ¥æ¨¡å‹æ€»é¢æ•°
 limset = 0
 def FaceNum_Check(*args):
     global selection
@@ -44,14 +44,14 @@ def FaceNum_Check(*args):
     global fc;
     facecount = cmds.polyEvaluate(selection, t=True)
     limset =int( cmds.textFieldGrp(fc, query=True, tx=True));
-    print limset;
+    print (limset);
     if facecount > limset:
-        fcwin = "Ä£ĞÍÃæÊı¸ßÓÚÏŞÖÆ"
+        fcwin = "æ¨¡å‹é¢æ•°é«˜äºé™åˆ¶"
     else:
-        fcwin = "ÃæÊı·ûºÏ"
+        fcwin = "é¢æ•°ç¬¦åˆ"
     return fcwin
 
-#¼ì²é²¢¶Ô±ÈÌùÍ¼³ß´ç  
+#æ£€æŸ¥å¹¶å¯¹æ¯”è´´å›¾å°ºå¯¸  
 def Tex_Check(*args):
     global setlist_out,namelist,display11
     order=-1
@@ -65,7 +65,7 @@ def Tex_Check(*args):
             display11 = 1             
             wintext_list.append(wintext)         
     return wintext_list
-#Êä³öËùÓĞÌùÍ¼Ãû×ÖºÍ³ß´ç
+#è¾“å‡ºæ‰€æœ‰è´´å›¾åå­—å’Œå°ºå¯¸
 def getTex(*args):
     global namelist
     size=[]
@@ -84,7 +84,7 @@ def getTex(*args):
         namelist.append(name)
         texlist.append(size_out)
     return texlist
-#Ìí¼Ósize
+#æ·»åŠ size
 def get_texsize(*args): 
     global size_field
     global sco,setlist,setlist_out
@@ -96,7 +96,7 @@ def get_texsize(*args):
     setlist=cmds.textScrollList( sco, query=True, ai=True)  
     for i in setlist:
         setlist_out.append(i.encode('utf8'))  
-#ÒÆ³ısize           
+#ç§»é™¤size           
 def del_texsize(*args):
     global sco,setlist ,setlist_out
     setlist_out=[]   
@@ -106,14 +106,14 @@ def del_texsize(*args):
     for i in setlist:
         setlist_out.append(i.encode('utf8'))     
 
-# ¼ì²é×ø±ê¹éÁã
+# æ£€æŸ¥åæ ‡å½’é›¶
 def AxisCheck(*args):
     global selection
     global display1
     NameList_Axis = []
     for i in selection:
         Name = i
-        print i
+        print (i)
         word = cmds.xform(Name, q=1, ws=1, rp=1)
         if word[0] + word[1] + word[2] != 0:
             NameList_Axis.append(Name.encode('utf8'))
@@ -123,7 +123,7 @@ def AxisCheck(*args):
     return NameList_Axis
 
 
-# ¼ì²é¶³½á±ä»»
+# æ£€æŸ¥å†»ç»“å˜æ¢
 def TransformCheck(*args):
     global selection
     global display2
@@ -147,7 +147,7 @@ def TransformCheck(*args):
     return NameList_Ts
 
 
-# ¼ì²é¶à±ßÃæ
+# æ£€æŸ¥å¤šè¾¹é¢
 def OverSides(*args):
     global selection
     global display3, osface
@@ -160,7 +160,7 @@ def OverSides(*args):
     NameList = cmds.ls(sl=True)
     cmds.select(clear=1)
     cmds.hilite(replace=True)
-    print osface
+    print (osface)
     for i in NameList:
         NameList_Os.append(i.split('.')[0].encode('utf8'))
     if len(NameList_Os) != 0:
@@ -168,7 +168,7 @@ def OverSides(*args):
     return NameList_Os
 
 
-# ¼ì²éÅ¤ÇúÃæ
+# æ£€æŸ¥æ‰­æ›²é¢
 def WrapFace(*args):
     global selection
     global display4, wpface
@@ -181,7 +181,7 @@ def WrapFace(*args):
     NameList = cmds.ls(sl=True)
     cmds.select(clear=1)
     cmds.hilite(replace=True)
-    print wpface
+    print (wpface)
     for i in NameList:
         NameList_Wf.append(i.split('.')[0].encode('utf8'))
     if len(NameList_Wf) != 0:
@@ -189,20 +189,20 @@ def WrapFace(*args):
     return NameList_Wf
 
 
-# ¼ì²éÄ£ĞÍ¿ª·Å±ß
+# æ£€æŸ¥æ¨¡å‹å¼€æ”¾è¾¹
 def OpenEdge(*args):
     global selection
     global display5
     global opedge
     NameList_Oe = []
     cmds.select(selection)
-    # Ñ¡ÔñÔ¼Êø¿ª·Å±ß
+    # é€‰æ‹©çº¦æŸå¼€æ”¾è¾¹
     pm.polySelectConstraint(where=1, type=0x8000, mode=3)
     opedge = cmds.ls(sl=True)
-    print opedge
+    print (opedge)
     cmds.ConvertSelectionToShell()
     NameList = cmds.ls(sl=True)
-    # ÖØÖÃÔ¼Êø
+    # é‡ç½®çº¦æŸ
     cmd = r'resetPolySelectConstraint'
     result = mm.eval(cmd)
     cmds.select(clear=1)
@@ -214,19 +214,19 @@ def OpenEdge(*args):
     return NameList_Oe
 
 
-# Ñ¡³öËùÓĞÓ²±ß
+# é€‰å‡ºæ‰€æœ‰ç¡¬è¾¹
 def Hardedge_Check(*args):
-    obj = cmds.ls(selection=True)  # ´æ´¢µ±Ç°Ñ¡ÔñÎïÌå
-    cmds.polySelectConstraint(m=3, t=0x8000, sm=1)  # Ö»Ñ¡ÔñÓ²±ß
-    sel = cmds.ls(selection=True)  # ´æ´¢Ñ¡Ôñ±ß
-    cmds.polySelectConstraint(sm=0)  # »¹Ô­Ñ¡zhiÔñÔ¼Êø
-    cmds.select(obj)  # »¹Ô­Ö®Ç°Ñ¡ÔñµÄÎïÌå
-    cmds.selectMode(component=True)  # ¸ü¸ÄÑ¡ÔñÄ£Ê½
-    cmds.selectType(edge=True)  # ¸ü¸ÄÑ¡ÔñÏîÎªµ½±ßÄ£Ê½
-    cmds.select(sel)  # Ñ¡Ôñ´æ´¢µÄ±ß
+    obj = cmds.ls(selection=True)  # å­˜å‚¨å½“å‰é€‰æ‹©ç‰©ä½“
+    cmds.polySelectConstraint(m=3, t=0x8000, sm=1)  # åªé€‰æ‹©ç¡¬è¾¹
+    sel = cmds.ls(selection=True)  # å­˜å‚¨é€‰æ‹©è¾¹
+    cmds.polySelectConstraint(sm=0)  # è¿˜åŸé€‰zhiæ‹©çº¦æŸ
+    cmds.select(obj)  # è¿˜åŸä¹‹å‰é€‰æ‹©çš„ç‰©ä½“
+    cmds.selectMode(component=True)  # æ›´æ”¹é€‰æ‹©æ¨¡å¼
+    cmds.selectType(edge=True)  # æ›´æ”¹é€‰æ‹©é¡¹ä¸ºåˆ°è¾¹æ¨¡å¼
+    cmds.select(sel)  # é€‰æ‹©å­˜å‚¨çš„è¾¹
 
 
-# ¼ì²éUV¶ªÊ§
+# æ£€æŸ¥UVä¸¢å¤±
 def UvLose(*args):
     global display7
     global selection, ulface
@@ -239,7 +239,7 @@ def UvLose(*args):
     NameList = cmds.ls(sl=True)
     cmds.select(clear=1)
     cmds.hilite(replace=True)
-    print ulface
+    print (ulface)
     for i in NameList:
         NameList_Uvlose.append(i.split('.')[0].encode('utf8'))
     if len(NameList_Uvlose) != 0:
@@ -247,7 +247,7 @@ def UvLose(*args):
     return NameList_Uvlose
 
 
-# ¼ì²éUVÖØµş(Py)
+# æ£€æŸ¥UVé‡å (Py)
 def UVoverlap(*args):
     global selection
     global display8, UVolface
@@ -260,7 +260,7 @@ def UVoverlap(*args):
     NameList = cmds.ls(sl=True)
     cmds.select(clear=1)
     cmds.hilite(replace=True)
-    print UVolface
+    print (UVolface)
     for i in NameList:
         NameList_Uvoverlap.append(i.split('.')[0].encode('utf8'))
     if len(NameList_Uvoverlap) != 0:
@@ -268,13 +268,13 @@ def UVoverlap(*args):
     return NameList_Uvoverlap
 
 
-# ¼ì²éUVÊÇ·ñ³¬³öµÚÒ»ÏóÏŞ
+# æ£€æŸ¥UVæ˜¯å¦è¶…å‡ºç¬¬ä¸€è±¡é™
 def UVout_Check(*args):
     global display9, out
     mesh_shape_list = pm.ls(typ='mesh')
     NameList = []
     out = []
-    # ÅĞ¶ÏUVÊÇ·ñÔÚµÚÒ»ÏóÏŞ
+    # åˆ¤æ–­UVæ˜¯å¦åœ¨ç¬¬ä¸€è±¡é™
     for shape in mesh_shape_list:
         for i in zip(shape.getUVs()[1], shape.getUVs()[0]):
             if i[0] <= 0 or i[0] >= 1:
@@ -283,7 +283,7 @@ def UVout_Check(*args):
                 NameList.append(shape)
             else:
                 continue
-                # È¡³öUV²»ÔÚµÚÒ»ÏóÏŞµÄÎïÌå
+                # å–å‡ºUVä¸åœ¨ç¬¬ä¸€è±¡é™çš„ç‰©ä½“
     for ii in mesh_shape_list:
         if ii in NameList:
             out.append(str(ii)[:-5])
@@ -296,7 +296,7 @@ def UVout_Check(*args):
     return out
 
 
-# ¶¨ÒåGetRot·½·¨
+# å®šä¹‰GetRotæ–¹æ³•
 def GetRot(time):
     global sel
     info = []
@@ -321,11 +321,11 @@ def GetTran(time):
         tranz = cmds.getAttr(i + ".tz")
         iposInfo = [i, tranx, trany, tranz]
         info.append(iposInfo)
-    print info
+    print (info)
     return info
 
 
-# ±È½ÏÊ×Î²Ö¡¹Ç÷ÀµÄĞı×ªºÍÎ»ÒÆ
+# æ¯”è¾ƒé¦–å°¾å¸§éª¨éª¼çš„æ—‹è½¬å’Œä½ç§»
 def AnKey_Check(*args):
     global selection, sel
     global display10
@@ -333,7 +333,7 @@ def AnKey_Check(*args):
     cmds.select(selection, hierarchy=True)
     sel = cmds.ls(sl=True)
     cmds.select(clear=1)
-    print sel
+    print (sel)
     maxT = cmds.playbackOptions(query=True, maxTime=True)
     minT = cmds.playbackOptions(query=True, minTime=True)
     maxlist_R = GetRot(maxT)
@@ -354,12 +354,12 @@ def AnKey_Check(*args):
     if rot + tran == 0:
         wintext = ' '
     else:
-        wintext = 'Ê×Î²Ö¡¹Ç÷ÀÎ»ÖÃ»òĞı×ª²»Ò»ÖÂ'
+        wintext = 'é¦–å°¾å¸§éª¨éª¼ä½ç½®æˆ–æ—‹è½¬ä¸ä¸€è‡´'
         display10 = 1
     return wintext
 
 
-# ²éÑ¯checkBoxÊÇ·ñ¹´Ñ¡£¬¸³Óè±äÁ¿Num
+# æŸ¥è¯¢checkBoxæ˜¯å¦å‹¾é€‰ï¼Œèµ‹äºˆå˜é‡Num
 def checkBoxs(*args):
     # print 'checkBoxs'
     global Num1, Num2, Num3, Num4, Num5, Num6, Num7, Num8, Num9, Num10, Num11, Num12,Num13
@@ -377,70 +377,70 @@ def checkBoxs(*args):
     Num12 = cmds.checkBox('checkBox_Key', q=True, v=True)
     Num13 = cmds.checkBox('checkBox_Texsize', q=True, v=True)
     
-    print Num8
+    print (Num8)
 
 
-# Êä³ö¼ì²é½á¹û
+# è¾“å‡ºæ£€æŸ¥ç»“æœ
 def CheckReseult(*args):
     global display1, display2, display3, display4, display5, display7, display8, display9, display10
     global wintext_list
     if UnitCheck != None and Num1 == 1:
-        cmds.text('µ¥Î»¼ì²é', bgc=(0.5, 0.4, 0.3), h=30)
+        cmds.text('å•ä½æ£€æŸ¥', bgc=(0.5, 0.4, 0.3), h=30)
         cmds.text(UnitCheck());
     if FaceNum_Check != None and Num2 == 1:
-        cmds.text('ÃæÊı¼ì²é', bgc=(0.5, 0.4, 0.3), h=30)
+        cmds.text('é¢æ•°æ£€æŸ¥', bgc=(0.5, 0.4, 0.3), h=30)
         cmds.text(FaceNum_Check());
     if display1 != 0 and Num3 == 1:
-        cmds.text('×ø±êÖá¹éÁã', bgc=(0.3, 0.4, 0.5), h=30)
+        cmds.text('åæ ‡è½´å½’é›¶', bgc=(0.3, 0.4, 0.5), h=30)
         for ii in AxisCheck():
             cmds.text(ii + ' ');
-        cmds.button(label='Ñ¡ÔñÈ«²¿', command=selectAll_Axis)
+        cmds.button(label='é€‰æ‹©å…¨éƒ¨', command=selectAll_Axis)
     if display2 != 0 and Num4 == 1:
-        cmds.text('¶³½á±ä»»', bgc=(0.3, 0.4, 0.5), h=30)
+        cmds.text('å†»ç»“å˜æ¢', bgc=(0.3, 0.4, 0.5), h=30)
         for ii in TransformCheck():
             cmds.text(ii + '  ');
-        cmds.button(label='Ñ¡ÔñÈ«²¿', command=selectAll_Tran)
+        cmds.button(label='é€‰æ‹©å…¨éƒ¨', command=selectAll_Tran)
     if display3 != 0 and Num5 == 1:
-        cmds.text('¶à±ßÃæ', bgc=(0.3, 0.4, 0.5), h=30)
+        cmds.text('å¤šè¾¹é¢', bgc=(0.3, 0.4, 0.5), h=30)
         for ii in OverSides():
             cmds.text(ii + '   ');
-        cmds.button(label='Ñ¡ÔñÈ«²¿', command=selectAll_osface)
+        cmds.button(label='é€‰æ‹©å…¨éƒ¨', command=selectAll_osface)
     if display4 != 0 and Num6 == 1:
-        cmds.text('Å¤ÇúÃæ', bgc=(0.3, 0.4, 0.5), h=30)
+        cmds.text('æ‰­æ›²é¢', bgc=(0.3, 0.4, 0.5), h=30)
         for ii in WrapFace():
             cmds.text(ii + '    ');
-        cmds.button(label='Ñ¡ÔñÈ«²¿', command=selectAll_wpface)
+        cmds.button(label='é€‰æ‹©å…¨éƒ¨', command=selectAll_wpface)
     if display5 != 0 and Num7 == 1:
-        cmds.text('¿ª·Å±ß', bgc=(0.3, 0.4, 0.5), h=30)
+        cmds.text('å¼€æ”¾è¾¹', bgc=(0.3, 0.4, 0.5), h=30)
         for ii in OpenEdge():
             cmds.text(ii + '     ');
-        cmds.button(label='Ñ¡ÔñÈ«²¿', command=selectAll_opedge)
+        cmds.button(label='é€‰æ‹©å…¨éƒ¨', command=selectAll_opedge)
     # Num8888888888888888888888888888
     if display7 != 0 and Num9 == 1:
-        cmds.text('UV¶ªÊ§', bgc=(0.3, 0.5, 0.4), h=30)
+        cmds.text('UVä¸¢å¤±', bgc=(0.3, 0.5, 0.4), h=30)
         for ii in UvLose():
             cmds.text(ii + '      ');
-        cmds.button(label='Ñ¡ÔñÈ«²¿', command=selectAll_ulface)
+        cmds.button(label='é€‰æ‹©å…¨éƒ¨', command=selectAll_ulface)
     if display8 != 0 and Num10 == 1:
-        cmds.text('UVÖØµş', bgc=(0.3, 0.5, 0.4), h=30)
+        cmds.text('UVé‡å ', bgc=(0.3, 0.5, 0.4), h=30)
         for ii in UVoverlap():
             cmds.text(ii + '       ');
-        cmds.button(label='Ñ¡ÔñÈ«²¿', command=selectAll_UVolface)
+        cmds.button(label='é€‰æ‹©å…¨éƒ¨', command=selectAll_UVolface)
     if display9 != 0 and Num11 == 1:
-        cmds.text('UV³¬ÏóÏŞ', bgc=(0.3, 0.5, 0.4), h=30)
+        cmds.text('UVè¶…è±¡é™', bgc=(0.3, 0.5, 0.4), h=30)
         for ii in UVout_Check():
             cmds.text(ii + '        ');
-        cmds.button(label='Ñ¡ÔñÈ«²¿', command=selectAll_outuv)
+        cmds.button(label='é€‰æ‹©å…¨éƒ¨', command=selectAll_outuv)
     if display10 != 0 and Num12 == 1:
-        cmds.text('Ê×Î²Ö¡¼ì²é', bgc=(0.6, 0.3, 0.4), h=30)
+        cmds.text('é¦–å°¾å¸§æ£€æŸ¥', bgc=(0.6, 0.3, 0.4), h=30)
         cmds.text(AnKey_Check());
     if display11 != 0 and Num13 == 1:
-        cmds.text('ÌùÍ¼³ß´ç¼ì²é', bgc=(0.5, 0.4, 0.3), h=30)
+        cmds.text('è´´å›¾å°ºå¯¸æ£€æŸ¥', bgc=(0.5, 0.4, 0.3), h=30)
         for ii in Tex_Check():
             cmds.text(ii);        
     if display1 + display2 + display3 + display4 + display5 + display7 + display8 + display9 + display10 +display11== 0:
-        cmds.text('ËùÓĞ¼ì²éÍ¨¹ı')
-# Ñ¡³ö°´Å¥
+        cmds.text('æ‰€æœ‰æ£€æŸ¥é€šè¿‡')
+# é€‰å‡ºæŒ‰é’®
 def selectAll_Axis(*args):
     cmds.select(AxisCheck())
 def selectAll_Tran(*args):
@@ -465,13 +465,13 @@ def selectAll_outuv(*args):
     cmds.select(out)
 
 
-# ¶¨Òå°´Å¥
+# å®šä¹‰æŒ‰é’®
 def checkBox_button(*args):
     global selection
     global Num1, Num2, Num3, Num4, Num5, Num6, Num7, Num8, Num9, Num10, Num11, Num12,Num13 
     global display1, display2, display3, display4, display5, display7, display8, display9,display10,display11
     display1 = display2 = display3 = display4 = display5 = display7 = display8 = display9 = display10 = display11 = 0
-    # ´æ´¢Ñ¡ÔñÎïÌå
+    # å­˜å‚¨é€‰æ‹©ç‰©ä½“
     selection = cmds.ls(sl=True)
     cmds.select(clear=1)
     if Num1 == 1:
@@ -518,18 +518,18 @@ display1 = display2 = display3 = display4 = display5 = display7 = display8 = dis
 
 myWin = cmds.window(title='Check Panel v1.0', w=250, h=550)
 col=cmds.rowColumnLayout()
-cmds.text(version + 'ÖĞÎÄ°æ');
+cmds.text(version + 'ä¸­æ–‡ç‰ˆ');
 cmds.setParent(col)
 
 # Sense Check
 cmds.frameLayout(label = "1:Sense Check",w=250,cll=True)
 rowp=cmds.rowColumnLayout()
 
-cmds.checkBox('checkBox_Unit', label='µ¥Î»', v=0, cc='checkBoxs()')
-cmds.checkBox('checkBox_Fc', label='ÃæÊı', v=0, cc='checkBoxs()')
+cmds.checkBox('checkBox_Unit', label='å•ä½', v=0, cc='checkBoxs()')
+cmds.checkBox('checkBox_Fc', label='é¢æ•°', v=0, cc='checkBoxs()')
 fc = cmds.textFieldGrp(label='Limit  ',cw2=(40,50));
 
-cmds.checkBox('checkBox_Texsize', label='ÌùÍ¼³ß´ç', v=0, cc='checkBoxs()')
+cmds.checkBox('checkBox_Texsize', label='è´´å›¾å°ºå¯¸', v=0, cc='checkBoxs()')
 size_field = cmds.textFieldGrp(label='Scale ', text="1024*1024", cw2=(40,80));
 cmds.rowColumnLayout(nc=2,cs=[(2,90)],p=rowp)
 cmds.button(label='Get Scale',w=80, command=get_texsize)
@@ -543,12 +543,12 @@ cmds.setParent(col)
 # Mesh Check
 cmds.frameLayout(label = "2:Mesh Check",w=250,cll=True)
 cmds.columnLayout()
-#cmds.checkBoxGrp( numberOfCheckBoxes=3, labelArray3=['×ø±êÖá¹éÁã', '¶³½á±ä»»', '¶à±ßÃæ'] ,cc='checkBoxs()')
-cmds.checkBox('checkBox_Ax', label='×ø±êÖá¹éÁã', v=0, cc='checkBoxs()')
-cmds.checkBox('checkBox_Ts', label='¶³½á±ä»»', v=0, cc='checkBoxs()')
-cmds.checkBox('checkBox_Os', label='¶à±ßÃæ', v=0, cc='checkBoxs()')
-cmds.checkBox('checkBox_Wf', label='Å¤ÇúÃæ', v=0, cc='checkBoxs()')
-cmds.checkBox('checkBox_Oe', label='¿ª·Å±ß', v=0, cc='checkBoxs()')
+#cmds.checkBoxGrp( numberOfCheckBoxes=3, labelArray3=['åæ ‡è½´å½’é›¶', 'å†»ç»“å˜æ¢', 'å¤šè¾¹é¢'] ,cc='checkBoxs()')
+cmds.checkBox('checkBox_Ax', label='åæ ‡è½´å½’é›¶', v=0, cc='checkBoxs()')
+cmds.checkBox('checkBox_Ts', label='å†»ç»“å˜æ¢', v=0, cc='checkBoxs()')
+cmds.checkBox('checkBox_Os', label='å¤šè¾¹é¢', v=0, cc='checkBoxs()')
+cmds.checkBox('checkBox_Wf', label='æ‰­æ›²é¢', v=0, cc='checkBoxs()')
+cmds.checkBox('checkBox_Oe', label='å¼€æ”¾è¾¹', v=0, cc='checkBoxs()')
 
 cmds.setParent("..")
 cmds.separator( height=5, style='out' )
@@ -557,16 +557,16 @@ cmds.setParent(col)
 
 # UV Check
 cmds.frameLayout(label = "3:UV Check",w=250,cll=True)
-cmds.checkBox('checkBox_UVlose', label='UV¶ªÊ§', v=0, cc='checkBoxs()')
-cmds.checkBox('checkBox_UVoverlap', label='UVÖØµş', v=0, cc='checkBoxs()')
-cmds.checkBox('checkBox_UVOutside', label='UV³¬ÏóÏŞ', v=0, cc='checkBoxs()')
+cmds.checkBox('checkBox_UVlose', label='UVä¸¢å¤±', v=0, cc='checkBoxs()')
+cmds.checkBox('checkBox_UVoverlap', label='UVé‡å ', v=0, cc='checkBoxs()')
+cmds.checkBox('checkBox_UVOutside', label='UVè¶…è±¡é™', v=0, cc='checkBoxs()')
 #cmds.setParent("..")
 cmds.separator( height=5, style='out' )
 cmds.setParent(col)
 
 # Animation Check
 cmds.frameLayout(label = "4:Animation Check",w=250,cll=True)
-cmds.checkBox('checkBox_Key', label='Ê×Î²Ö¡Ò»ÖÂ£¨Ñ¡Ôñ¸ù¹Ç£©', v=0, cc='checkBoxs()')
+cmds.checkBox('checkBox_Key', label='é¦–å°¾å¸§ä¸€è‡´ï¼ˆé€‰æ‹©æ ¹éª¨ï¼‰', v=0, cc='checkBoxs()')
 cmds.separator( height=5, style='out' )
 cmds.setParent(col)
 
