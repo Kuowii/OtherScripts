@@ -19,10 +19,10 @@ class BatchExportWindow:
         cmds.columnLayout();
         cmds.text(self.version);
         cmds.rowColumnLayout( numberOfColumns=3, columnAttach=(1, 'left', 0), columnWidth=[(1, 50), (2, 300),(3, 50)] );
-        cmds.text( label='导出路径' )
+        cmds.text( label='Export Path' )
         self.txt_out = cmds.textField();
-        cmds.button(label=" 浏 览 ",command=self.browsrOutput);
-        cmds.button(label=" 导 出 ",command=self.startExport);
+        cmds.button(label=" Browser ",command=self.browsrOutput);
+        cmds.button(label=" Export ",command=self.startExport);
         cmds.showWindow(self.MainWin);
         
     def startExport(self,sender):
@@ -37,7 +37,7 @@ class BatchExportWindow:
             cmds.file(fp,es=True,f=True,type="FBX export");
 
     def browsrOutput(self,sender):
-        save_folder = cmds.fileDialog2(caption="选择输出目录",fm=3)[0];
+        save_folder = cmds.fileDialog2(caption="Select Export Result Folder",fm=3)[0];
         cmds.textField(self.txt_out,tx=save_folder,edit=1);
 
 BatchExportWindow();
