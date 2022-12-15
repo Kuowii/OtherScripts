@@ -30,10 +30,9 @@ def getAllBSControl():
     r={};
     ns = cmds.ls(typ="blendShape");
     for n in ns:
-        ts = cmds.blendShape(n,q=1,t=1);
-        for i in range(len(ts)):
-            bnames = ts[i].split('|');
-            bn = bnames[len(bnames)-1].lower();
+        ws = cmds.listAttr(f'{n}.w',m=1);
+        for i in range(len(ws)):
+            bn = ws[i]
             if not bn in r:
                 r.setdefault(bn,BSControlData(bn));
             r[bn].addControl(n,i);
