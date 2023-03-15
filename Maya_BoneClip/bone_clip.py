@@ -2,13 +2,19 @@
 from maya import cmds
 
 def boneClip(bones):
-    bones=cmds.ls(sl=1)
     for b in bones:
         attrn=b+".translate";
         tp=cmds.getAttr(attrn)[0];
         cmds.setAttr(attrn+"X",round(tp[0], 3))
         cmds.setAttr(attrn+"Y",round(tp[1], 3))
         cmds.setAttr(attrn+"Z",round(tp[2], 3))
+        
+        attrn=b+".jointOrient";
+        tp=cmds.getAttr(attrn)[0]
+        cmds.setAttr(attrn+"X",0)
+        cmds.setAttr(attrn+"Y",0)
+        cmds.setAttr(attrn+"Z",0)
+        
     cmds.confirmDialog( title='Compelet', message='Bone Translate Clip Finish!')
 
 def boneCheck(bones):
@@ -23,6 +29,17 @@ def boneCheck(bones):
             if dlen>3 and isVaild:
                 isVaild = False
                 break;
+        if not isVaild:
+            r.append(b)
+            break;
+            
+        attrn=b+".jointOrient";
+        tp=cmds.getAttr(attrn)[0];
+        for i in range(3):
+            if tp[i]!=0 and isVaild:
+                isVaild = False
+                break;
+                
         if not isVaild:r.append(b)
     return r;
         
@@ -54,7 +71,9 @@ class MainWindow:
 
    def clipSelected(self,sender):
        sel = cmds.textScrollList(self.list,query=1,si=1);
-       boneClip(sel)
+       cmds.select(sel)
+       bones=cmds.ls(sl=1)
+       boneClip(bones)
        
    def winMain(self,WinName):
        self.win =cmds.window(WinName,title="Bone Translate Checker By Wings")
