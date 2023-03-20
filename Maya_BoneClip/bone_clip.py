@@ -1,13 +1,21 @@
 # -*- coding: utf-8 -*-
 from maya import cmds
 
+def truncate(f, n):
+    '''Truncates/pads a float f to n decimal places without rounding'''
+    s = '{}'.format(f)
+    if 'e' in s or 'E' in s:
+        return '{0:.{1}f}'.format(f, n)
+    i, p, d = s.partition('.')
+    return '.'.join([i, (d+'0'*n)[:n]])
+
 def boneClip(bones):
     for b in bones:
         attrn=b+".translate";
         tp=cmds.getAttr(attrn)[0];
-        cmds.setAttr(attrn+"X",round(tp[0], 3))
-        cmds.setAttr(attrn+"Y",round(tp[1], 3))
-        cmds.setAttr(attrn+"Z",round(tp[2], 3))
+        cmds.setAttr(attrn+"X",float(truncate(round(tp[0], 3),3)))
+        cmds.setAttr(attrn+"Y",float(truncate(round(tp[1], 3),3)))
+        cmds.setAttr(attrn+"Z",float(truncate(round(tp[2], 3),3)))
         
         attrn=b+".jointOrient";
         tp=cmds.getAttr(attrn)[0]
@@ -31,7 +39,7 @@ def boneCheck(bones):
                 break;
         if not isVaild:
             r.append(b)
-            break;
+            continue;
             
         attrn=b+".jointOrient";
         tp=cmds.getAttr(attrn)[0];
@@ -40,7 +48,8 @@ def boneCheck(bones):
                 isVaild = False
                 break;
                 
-        if not isVaild:r.append(b)
+        if not isVaild:
+            r.append(b)
     return r;
         
 class MainWindow: 
@@ -55,6 +64,7 @@ class MainWindow:
        cmds.showWindow(self.win);
    def refreshAll(self,sender):
        bones=cmds.ls(type='joint')
+       print(bones);
        r=boneCheck(bones);
        cmds.textScrollList(self.list,edit=1,ra=1);
        cmds.textScrollList(self.list,edit=1,append=r);
@@ -71,7 +81,7 @@ class MainWindow:
 
    def clipSelected(self,sender):
        sel = cmds.textScrollList(self.list,query=1,si=1);
-       cmds.select(sel)
+       cmds.select(sel,add=1)
        bones=cmds.ls(sl=1)
        boneClip(bones)
        
