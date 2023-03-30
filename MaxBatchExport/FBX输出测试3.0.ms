@@ -40,34 +40,34 @@ fn SFBX =
 
 try (destroyDialog Export)catch()
 
-rollout Export "FBXµ¼³ö£¨²âÊÔ£©"
+rollout Export "FBXå¯¼å‡ºï¼ˆæµ‹è¯•ï¼‰"
 (
 	
 				
 	group "FBX"
 	    (
-			checkbox Animation "¶¯»­" tooltip:"Animation" pos:[10,20]  checked:False 
-		    checkbox BakeAnimation "ºæÅà" tooltip:"BakeAnimation" pos:[10,40]  checked:False
-		    checkbox shape "±äĞÎ" tooltip:"Morphs" pos:[10,60] checked:False
-			checkbox Skin "ÃÉÆ¤" tooltip:"Skin" pos:[10,80]  checked:False
-			checkbox UseSceneName "³¡¾°Ãû" tooltip:"UseSceneName" pos:[10,100]  checked:False
+			checkbox Animation "åŠ¨ç”»" tooltip:"Animation" pos:[10,20]  checked:False 
+		    checkbox BakeAnimation "çƒ˜åŸ¹" tooltip:"BakeAnimation" pos:[10,40]  checked:False
+		    checkbox shape "å˜å½¢" tooltip:"Morphs" pos:[10,60] checked:False
+			checkbox Skin "è’™çš®" tooltip:"Skin" pos:[10,80]  checked:False
+			checkbox UseSceneName "åœºæ™¯å" tooltip:"UseSceneName" pos:[10,100]  checked:False
 			
-		    checkbox SmoothingGroups "Æ½»¬×é" tooltip:"SmoothingGroups" pos:[85,20] checked:False
-		    checkbox SmoothMeshExport "ÎĞÂÖÆ½»¬" tooltip:"TurboSmooth" pos:[85,40] checked:true
-			checkbox EmbedTextures "Ã½Ìå" tooltip:"EmbedMedia" pos:[85,60] checked:False
-			checkbox GeomAsBone "×ª»¯Îª¹Ç÷À" tooltip:"ConvertDeformingDummiesToBones" pos:[85,80] checked:true
-			checkbox ColladaTriangulate "Èı½Ç»¯" tooltip:"ColladaTriangulate" pos:[85,100] checked:False
+		    checkbox SmoothingGroups "å¹³æ»‘ç»„" tooltip:"SmoothingGroups" pos:[85,20] checked:False
+		    checkbox SmoothMeshExport "æ¶¡è½®å¹³æ»‘" tooltip:"TurboSmooth" pos:[85,40] checked:true
+			checkbox EmbedTextures "åª’ä½“" tooltip:"EmbedMedia" pos:[85,60] checked:False
+			checkbox GeomAsBone "è½¬åŒ–ä¸ºéª¨éª¼" tooltip:"ConvertDeformingDummiesToBones" pos:[85,80] checked:true
+			checkbox ColladaTriangulate "ä¸‰è§’åŒ–" tooltip:"ColladaTriangulate" pos:[85,100] checked:False
 			
-		    checkbox Lights "µÆ¹â" tooltip:"Lights" pos:[170,20] checked:False
-		    checkbox Cameras "ÉãÏñ»ú" tooltip:"Cameras" pos:[170,40] checked:False
-		    checkbox PreserveEdgeOrientation "±ßÔµ³¯Ïò" tooltip:"PreserveEdgeOrientation" pos:[170,60] checked:true
-			checkbox AnimationClipClamp "¶¯»­Ñ¡¶Î" tooltip:"Ö»µ¼³öµ±Ç°¶¯»­ÖáÉè¶¨µÄÇøÓò" pos:[170,80] checked:False
+		    checkbox Lights "ç¯å…‰" tooltip:"Lights" pos:[170,20] checked:False
+		    checkbox Cameras "æ‘„åƒæœº" tooltip:"Cameras" pos:[170,40] checked:False
+		    checkbox PreserveEdgeOrientation "è¾¹ç¼˜æœå‘" tooltip:"PreserveEdgeOrientation" pos:[170,60] checked:true
+			checkbox AnimationClipClamp "åŠ¨ç”»é€‰æ®µ" tooltip:"åªå¯¼å‡ºå½“å‰åŠ¨ç”»è½´è®¾å®šçš„åŒºåŸŸ" pos:[170,80] checked:False
 
-			Button btn1 "µ¼³öÈ«²¿" tooltip:"ALL" width:80 height:35 pos:[30,120]
-			Button btn2 "µ¼³öËùÑ¡" tooltip:"selectedOnly" width:80 height:35 pos:[150,120]
+			Button btn1 "å¯¼å‡ºå…¨éƒ¨" tooltip:"ALL" width:80 height:35 pos:[30,120]
+			Button btn2 "å¯¼å‡ºæ‰€é€‰" tooltip:"selectedOnly" width:80 height:35 pos:[150,120]
 			
-			Button btn3 "ÅúÁ¿µ¼³öÈ«²¿" tooltip:"ALL" width:80 height:35 pos:[30,160]
-			Button btn4 "ÅúÁ¿µ¼³öËùÑ¡" tooltip:"selectedOnly" width:80 height:35 pos:[150,160]
+			Button btn3 "æ‰¹é‡å¯¼å‡ºå…¨éƒ¨" tooltip:"ALL" width:80 height:35 pos:[30,160]
+			Button btn4 "æ‰¹é‡å¯¼å‡ºæ‰€é€‰" tooltip:"selectedOnly" width:80 height:35 pos:[150,160]
 	        )
 	
 		
@@ -121,7 +121,7 @@ rollout Export "FBXµ¼³ö£¨²âÊÔ£©"
 				FbxExport()
 				FBX()
 			)
-			messageBox "µ¼³öÍê³É"
+			messageBox "å¯¼å‡ºå®Œæˆ"
 		)			
 		)
 		
@@ -134,7 +134,7 @@ rollout Export "FBXµ¼³ö£¨²âÊÔ£©"
 				FbxExport()
 				SFBX()
 			)
-			messageBox "µ¼³öÍê³É"
+			messageBox "å¯¼å‡ºå®Œæˆ"
 		)			
 		)
 
