@@ -126,12 +126,13 @@ rollout BatchApplyAnimationMenu "Batch ApplyAnimation" (
 			format "%/Temp_%.bip" info[2] info[3] to:stBipfull
 			local bipFull = stBipfull as string
 			
+			saveMaxAnimationTo sourceFile xafFull
+			
 			local isUseBip = saveBipAnimationTo bipFull
 			if not isUseBip then (
 				print "Save Bip faild!"
 				print bipFull
 			)
-			saveMaxAnimationTo sourceFile xafFull
 			for targetFile in tf do(
 				useXafAnimationFile targetFile xafFull
 				if isUseBip then useBipAnimationFile bipFull
@@ -143,7 +144,7 @@ rollout BatchApplyAnimationMenu "Batch ApplyAnimation" (
 			
 			if isAutoDeleteTempXAF.checked do (
 				deleteFile xafFull
-				deleteFile bipFull
+				if isUseBip then deleteFile bipFull
 			)
 		)
 		
