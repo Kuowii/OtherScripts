@@ -110,7 +110,7 @@ def __lyNormalizeWeight(weights,place,infNameList,addZero):
     nonZeroDict={}
     for i in range(0,len(weights),1):
         if (weights[i] != 0):
-            weights[i]= round(weights[i],4)
+            weights[i]= round(weights[i],10)
         nonZeroDict[infNameList[i]] = weights[i]
         if (largestWeight < nonZeroDict[infNameList[i]]):
             largestWeight = nonZeroDict[infNameList[i]]
