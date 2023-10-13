@@ -15,14 +15,10 @@ theFilenames = theDialog.fileNames
 )
 
 fn FBX = 
-(   
-	a = maxFileName
-	d = a.count
-	f = d-4
-    c = substring a 1 f    
-	b = maxFilePath
-    FileName = (b as string)+"\\"+(c as string)+".FBX"
-    exportfile FileName #noprompt                       
+(
+	fname=getFilenameFile maxFileName
+    FileFull = maxFilePath+fname+".FBX"
+    exportfile FileFull #noprompt                       
 	)
 	
 fn SFBX = 
