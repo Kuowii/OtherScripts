@@ -11,20 +11,26 @@ fn mulmatrix mx v=(
 
 Version = "MorphTargetTool 1.0 by Wings";
 
-bindedPoseMatrices=#()
-bindedRefObject=0
+localPoints=#()
+refSouceMesh=undefined
+refVertexMatrices=#()
 
---»ñÈ¡µ±Ç°pose×ËÌ¬ÏÂ¸÷¸öµãµÄÎ»ÖÃ£¬²¢°ÑÆäÔÚ¹Ç÷À±ä»»¾ØÕóÖĞµÄĞÅÏ¢´æ´¢ÏÂÀ´
---Èç¹ûµãÃ»ÓĞ±»¶îÍâ±à¼­£¬ÄÇÃ´ÔÚ½øÈë¹Ç÷À±ä»»¾ØÕóºó£¬ÆäÎ»ÖÃºÍBindedPoseÊÇÒ»ÖÂµÄ
---Èç¹ûÓĞ±à¼­£¬ÄÇÃ´°Ñ¹Ç÷À¾ØÕóÖĞµÄĞÂÎ»ÖÃÍ¨¹ıBindPose¾ØÕóÄæÔËËã£¬¿ÉÒÔµÃµ½ÆäÔÚBindPoseÏÂµÄÊÀ½çÎ»ÖÃ
+--è·å–å½“å‰poseå§¿æ€ä¸‹å„ä¸ªç‚¹çš„ä½ç½®ï¼Œå¹¶æŠŠå…¶åœ¨éª¨éª¼å˜æ¢çŸ©é˜µä¸­çš„ä¿¡æ¯å­˜å‚¨ä¸‹æ¥
+--å¦‚æœç‚¹æ²¡æœ‰è¢«é¢å¤–ç¼–è¾‘ï¼Œé‚£ä¹ˆåœ¨è¿›å…¥éª¨éª¼å˜æ¢çŸ©é˜µåï¼Œå…¶ä½ç½®å’ŒBindedPoseæ˜¯ä¸€è‡´çš„
+--å¦‚æœæœ‰ç¼–è¾‘ï¼Œé‚£ä¹ˆæŠŠéª¨éª¼çŸ©é˜µä¸­çš„æ–°ä½ç½®é€šè¿‡BindPoseçŸ©é˜µé€†è¿ç®—ï¼Œå¯ä»¥å¾—åˆ°å…¶åœ¨BindPoseä¸‹çš„ä¸–ç•Œä½ç½®
 fn getPointsPositionNow tmesh=(
 	local points=#()
 	local numVerts = tmesh.numVerts
 	local skinMod = tmesh.modifiers[Skin]
+	local pointWorldPos
+	local mesh_type = classOf tmesh
 	for v=1 to numVerts do(
 		local localToWorldMatrix = getTransformMatrixWithWeights skinMod v
-		
-		local pointWorldPos = meshop.getVert tmesh v
+		if mesh_type == PolyMeshObject then(
+			pointWorldPos = polyop.getVert tmesh v
+		)else(
+			pointWorldPos = meshop.getVert tmesh v
+		)
 		local localPoint =pointWorldPos * (Inverse localToWorldMatrix)
 		--format "Point[%] Position : %\n" pointIndex pointWorldPos
 		
@@ -49,13 +55,13 @@ fn getTransformMatrixWithWeights skinMod pointIndex =
     local weightCount=skinOps.GetVertexWeightCount skinMod pointIndex
 	local finalMatrix = matrix3 0
 	
-	-- ±éÀúÈ¨ÖØĞÅÏ¢£¬»ñÈ¡Ã¿¸ö¹Ç÷ÀµÄ±ä»»¾ØÕóºÍÈ¨ÖØ
+	-- éå†æƒé‡ä¿¡æ¯ï¼Œè·å–æ¯ä¸ªéª¨éª¼çš„å˜æ¢çŸ©é˜µå’Œæƒé‡
 	for i = 1 to weightCount do
 	(
 		local boneIndex = skinOps.GetVertexWeightBoneID skinMod pointIndex i
 		local boneWeight = skinOps.GetVertexWeight skinMod pointIndex i
 
-		-- »ñÈ¡¹Ç÷ÀµÄ±ä»»¾ØÕó
+		-- è·å–éª¨éª¼çš„å˜æ¢çŸ©é˜µ
 		local tbone = skinOps.GetBoneNode skinMod boneIndex
 		local boneTM = tbone.transform
 		local mweight = mulmatrix boneTM boneWeight
@@ -67,10 +73,19 @@ fn getTransformMatrixWithWeights skinMod pointIndex =
     return finalMatrix
 )
 
-fn applyLocalPoint tmesh bmats points=(
-	local numVerts = tmesh.numVerts
+fn applyLocalPoint smesh tmesh points=(
+	local numVerts = smesh.numVerts
+	select smesh
+	local mats= getPointMatricesWithBone smesh
+	local mesh_type = classOf tmesh		
 	for v=1 to numVerts do(
-		meshop.setVert tmesh v (points[v]*bmats[v])
+		local new_point=points[v]*mats[v]
+		if mesh_type == PolyMeshObject or mesh_type==Editable_Poly then(
+			polyop.setVert tmesh v new_point
+		)else(
+			meshop.setVert tmesh v new_point
+		)
+		
 	)
 )
 
@@ -83,18 +98,15 @@ rollout MorphTargetTool "MorphTargetTool"
 	)
 	label lbDisplay ""
 	on btnSave pressed do(
-		print("Save Bindedpose!")
-		global bindedPoseMatrices,bindedRefObject
-		bindedPoseMatrices=#()
-		bindedRefObject = selection[1]
-		bindedPoseMatrices = getPointMatricesWithBone bindedRefObject
-		format "Get % % binded pose data!" bindedRefObject.name bindedPoseMatrices.count
-		--lbDisplay.text=format "Get % % binded pose data!" bindedRefObject.name bindedPoseMatrices.count
+		print("Save Pose!")
+		global localPoints,refSouceMesh
+		localPoints=#()
+		refSouceMesh = selection[1]
+		localPoints =getPointsPositionNow refSouceMesh
 	)
 	on btnLoad pressed do(
-		global bindedPoseMatrices,bindedRefObject
-		local newLocalPoints = getPointsPositionNow bindedRefObject
-		applyLocalPoint selection[1] bindedPoseMatrices newLocalPoints
+		global localPoints,refSouceMesh
+		applyLocalPoint refSouceMesh selection[1] localPoints
 	)
 )
 
@@ -104,3 +116,4 @@ try(
 
 MorphTargetToolFolater = newRolloutFloater Version 300 150
 addRollout MorphTargetTool MorphTargetToolFolater rolledUp:false
+
