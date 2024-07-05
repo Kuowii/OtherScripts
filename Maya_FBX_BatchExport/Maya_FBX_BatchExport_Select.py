@@ -44,8 +44,11 @@ def copy_animation_by_name(from_root, to_root):
     print(f"Copy {from_root} To {to_root} Count:{count}。")
 
 def ExportFileToFBX(sfile,ofile):
-    cmds.file(sfile, open=True,force=True);
     rootbone='SM_female_01_a3_rig_rebinding:DHIbody:root'
+    try:
+        cmds.file(sfile, open=True,force=True);
+    except Exception as err:
+        print(sfile+' Open Exception : '+str(err)); 
     try:
         cmds.select(rootbone,hi=True);
         nsel = cmds.ls(cmds.ls(sl=True), type="joint")
