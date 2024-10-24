@@ -1,0 +1,1 @@
+python("import wy_fix;wy_fix.main()");
