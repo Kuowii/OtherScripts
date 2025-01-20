@@ -18,7 +18,7 @@ class BatchExportWindow:
         cmds.window( self.MainWin, edit=True, widthHeight=(400, 150) );
         cmds.columnLayout();
         cmds.text(self.version);
-        cmds.rowColumnLayout( numberOfColumns=3, columnAttach=(1, 'left', 0), columnWidth=[(1, 50), (2, 300),(3, 50)] );
+        cmds.rowColumnLayout( numberOfColumns=3, columnAttach=(1, 'left', 0), columnWidth=[(1, 100), (2, 300),(3, 50)] );
         cmds.text( label='Export Path' )
         self.txt_out = cmds.textField();
         cmds.button(label=" Browser ",command=self.browsrOutput);
