@@ -19,9 +19,9 @@ def boneClip(bones):
         
         attrn=b+".jointOrient";
         tp=cmds.getAttr(attrn)[0]
-        cmds.setAttr(attrn+"X",0)
-        cmds.setAttr(attrn+"Y",0)
-        cmds.setAttr(attrn+"Z",0)
+        cmds.setAttr(attrn+"X",float(truncate(round(tp[0], 3),3)))
+        cmds.setAttr(attrn+"Y",float(truncate(round(tp[1], 3),3)))
+        cmds.setAttr(attrn+"Z",float(truncate(round(tp[2], 3),3)))
         
     cmds.confirmDialog( title='Compelet', message='Bone Translate Clip Finish!')
 
@@ -81,6 +81,8 @@ class MainWindow:
 
    def clipSelected(self,sender):
        sel = cmds.textScrollList(self.list,query=1,si=1);
+       if sel == None or len(sel) <= 0:
+           sel = cmds.ls(sl=1,type='joint')
        cmds.select(sel,add=1)
        bones=cmds.ls(sl=1)
        boneClip(bones)
