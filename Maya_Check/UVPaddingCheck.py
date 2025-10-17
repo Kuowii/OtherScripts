@@ -17,7 +17,7 @@ class Bounds2D:
         """
         计算两个边界框之间的最小距离
         """
-        if self.max_x == other.max_x and self.min_x == other.min_x and self.max_y == other.may_y and self.min_y == other.min_y:
+        if self.max_x == other.max_x and self.min_x == other.min_x and self.max_y == other.max_y and self.min_y == other.min_y:
             return -1
 
         # 计算在两个方向上的距离
@@ -46,17 +46,11 @@ class UVShell:
         self.id=id
         self.calcBounds()
     def calcBounds(self):
-        min_u = float('inf')
-        min_v = float('inf')
-        max_u = float('-inf')
-        max_v = float('-inf')
+        min_u,min_v,max_u,max_v = float('inf'),float('inf'),float('-inf'),float('-inf')
         for pid in self.ids:
-            u=self.uArray[pid]
-            v=self.vArray[pid]
-            min_u = min(min_u, u)
-            min_v = min(min_v, v)
-            max_u = max(max_u, u)
-            max_v = max(max_v, v)
+            u,v=self.uArray[pid],self.vArray[pid]
+            min_u,min_v = min(min_u, u),min(min_v, v)
+            max_u,max_v = max(max_u, u),max(max_v, v)
         self.Bounds=Bounds2D(min_u,min_v,max_u,max_v)
     def __str__(self) -> str:
         return f"{self.uvSet} shell{self.id} v:{len(self.ids)}"
@@ -72,7 +66,7 @@ def getCloestPointsToOther(shell1:UVShell,shell2:UVShell,space = 0.1,texSize = 2
         for oid in shell2.ids:
             u2,v2 = shell2.uArray[oid],shell2.vArray[oid]
             dist = math.dist([u1,v1],[u2,v2]) * texSize
-            # print(f"{id}[{u1},{v1}] {oid}[{u2},{v2}] {dist} {space}")
+            #print(f"{id}[{u1},{v1}] {oid}[{u2},{v2}] {dist} {space}")
             if dist <= space:
                 points.append([id,oid])
     return points
@@ -107,28 +101,46 @@ def getUVShellList(name):
                 shells[n].append(i)
             else:
                 shells[n] = [i]
-        for s in shells.keys():
-            allShell.append(UVShell(shapeFn,uvset,shells[s],uArray,vArray,s))
+        for sid in shells.keys():
+            allShell.append(UVShell(shapeFn,uvset,shells[sid],uArray,vArray,sid))
     return allShell
     
 def checkUVPadding(mesh,textureSize = 2048,spacePixel = 16):
     errorPoints=[]
-    shells = enumerate(getUVShellList(mesh))
-    for i,shell1 in  shells:
-        for j,shell2 in shells:
-            if i==j:continue
-            bDist = shell1.Bounds-shell2.Bounds
-            #print(f"{mesh}.UVShell[{shell1.id}] {mesh}.UVShell[{shell2.id}] {bDist}")
+    shells = getUVShellList(mesh)
+    count = len(shells)
+    shellCheckList=[]
+    for j,s in enumerate(shells):
+        newSet = set(range(count))
+        newSet.discard(j)
+        shellCheckList.append(newSet)
+        
+    pw = cmds.progressWindow(
+        title='正在检查 '+str(mesh),
+        progress=0,
+        status='',
+        isInterruptable=True
+    )
+    for i,s1 in enumerate(shells):
+        if cmds.progressWindow(pw,query=True, isCancelled=True):
+            break
+        cmds.progressWindow(pw,edit=True,progress=i/count * 100,status=str(i)+'/'+str(count))
+        for j in shellCheckList[i]:
+            s2=shells[j]
+            bDist = s1.Bounds-s2.Bounds
+            #print(f"{mesh}.UVShell[{s1.id}] {mesh}.UVShell[{s2.id}] {bDist}")
             if bDist < spacePixel and bDist>=0:
-                points=getCloestPointsToOther(shell1,shell2,spacePixel,textureSize)
+                points=getCloestPointsToOther(s1,s2,spacePixel,textureSize)
                 for p in points:
                     errorPoints.append(f"{mesh}.map[{p[0]}]")
                     errorPoints.append(f"{mesh}.map[{p[1]}]")
+            shellCheckList[j].discard(i)
+    cmds.progressWindow(pw,endProgress=True)
     return errorPoints
         
 
 Preset=[(1024,8),(2048,16)]
-config = Preset[1]
+config = Preset[0]
 
 class UVPaddingCheckWindow:
     def __init__(self):
@@ -226,7 +238,7 @@ class UVPaddingCheckWindow:
         """执行按钮点击回调"""
         cid = cmds.optionMenu(self.dp_menu_config, query=True, select=True)
         global config,Preset
-        config = Preset[cid]
+        config = Preset[cid-1]
         cmds.textScrollList(self.resultList, edit=True, removeAll=True)
         self.resultDatas=[]
         CheckSelect(self)
