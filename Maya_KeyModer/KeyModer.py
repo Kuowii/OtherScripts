@@ -49,7 +49,7 @@ class KeysModer:
         
         # 选项部分
         cmds.frameLayout(label="选项", collapsable=True)
-        self.scale_value_slider=cmds.floatSliderGrp("scale_value_slider",label="缩放",field=True,minValue=0.00,maxValue=100.00,value=50.00)
+        self.scale_value_slider=cmds.floatSliderGrp("scale_value_slider",label="缩放",field=True,minValue=0.00,maxValue=300.00,value=50.00)
         cmds.setParent('..')
         
         # 按钮部分
@@ -60,7 +60,7 @@ class KeysModer:
     def do(self,sender):
         scale_value = cmds.floatSliderGrp(self.scale_value_slider,query=True,value=True)
         scale_value = scale_value/100.00
-        scale_anim_curves(0.5)
+        scale_anim_curves(scale_value)
 
 if __name__ == "__main__":
     tool = KeysModer()
